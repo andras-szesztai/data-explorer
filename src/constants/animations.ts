@@ -1,3 +1,5 @@
 export const DURATION_SECOND = {
-  lg: 3
+  md: 1,
+  lg: 2,
+  xl: 3
 }

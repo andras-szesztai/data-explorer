@@ -1,5 +1,5 @@
-import { Card, Select } from "antd"
 import React from "react"
+import { Card, Select } from "antd"
 
 import { ChartValueObject } from "../../types/charts"
 import { AvailableQuestion } from "../../types/dataSets"
