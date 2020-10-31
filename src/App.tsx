@@ -3,7 +3,6 @@ import {
   Select,
   Space,
   Card,
-  Radio,
   Collapse,
   Badge,
   Tooltip,
@@ -23,6 +22,7 @@ import { addFilter } from "./actions/filtersActions"
 import { updateFilteredDataSet } from "./actions/dataSetActions"
 import { dataSetReducer, initialDataSetState } from "./reducers/dataSetReducer"
 import { filtersReducer, initialFiltersState } from "./reducers/filtersReducer"
+import { chartsReducer, initialChartsState } from "./reducers/chartsReducer"
 
 import { useInitializeAvailableDataSets } from "./hooks"
 import { COLORS } from "./constants/colors"
@@ -30,6 +30,7 @@ import { CHART_AREA_HEIGHT } from "./constants/dimensions"
 import { AvailableQuestion } from "./types/dataSets"
 
 import "./styles/App.css"
+import ChartCard from "./components/ChartCard/ChartCard"
 
 const MainContainer = styled.div`
   width: 100vw;
@@ -53,12 +54,15 @@ const App = () => {
     dataSetReducer,
     initialDataSetState
   )
-  const prevDataSetState = usePrevious(dataSetState)
   const [filterState, updateFilterState] = React.useReducer(
     filtersReducer,
     initialFiltersState
   )
   const prevFilterState = usePrevious(filterState)
+  const [chartState, updateChartState] = React.useReducer(
+    chartsReducer,
+    initialChartsState
+  )
 
   const [questionSearchRef, { height: questionSearchRefHeight }] = useMeasure<
     HTMLDivElement
@@ -163,7 +167,11 @@ const App = () => {
                   style={{ width: "100%" }}
                   showSearch
                   showArrow={false}
-                  placeholder="Add a question as filter"
+                  placeholder={
+                    !dataSetState.availableQuestions.length
+                      ? "Select a dataset to start"
+                      : "Add a question as filter"
+                  }
                   value={filterState.filterQuestions.length ? "" : undefined}
                 >
                   {dataSetState.availableGroups.map((group: string) => {
@@ -248,49 +256,21 @@ const App = () => {
           <Card
             style={{
               height: "100%",
-              position: "relative",
             }}
             bodyStyle={{
               height: "100%",
             }}
           >
             <ChartsMainContainer>
-              <Card
-                title={
-                  <Select
-                    style={{
-                      width: "100%",
-                    }}
-                    showSearch
-                    allowClear
-                    placeholder="Add a question as chart"
-                    disabled={!dataSetState.availableQuestions.length}
-                    onClear={() => console.log("clear")}
-                    onSelect={(e) => console.log(e)}
-                  >
-                    {dataSetState.availableGroups.map((group: string) => {
-                      return (
-                        <Select.OptGroup label={group} key={`${group}-chart-q`}>
-                          {dataSetState.availableQuestions
-                            .filter((q: AvailableQuestion) => q.group === group && q.type)
-                            .sort(
-                              (a: AvailableQuestion, b: AvailableQuestion) =>
-                                a.question.localeCompare(b.question)
-                            )
-                            .map((q: AvailableQuestion) => (
-                              <Select.Option
-                                key={`${q.id}-chart`}
-                                value={q.question}
-                              >
-                                {q.question}
-                              </Select.Option>
-                            ))}
-                        </Select.OptGroup>
-                      )
-                    })}
-                  </Select>
-                }
-              />
+              {Object.values(chartState).map((chart, i: number) => {
+                return (
+                  <ChartCard
+                    key={i}
+                    dataSetState={dataSetState}
+                    chart={chart}
+                  />
+                )
+              })}
             </ChartsMainContainer>
           </Card>
         </Col>
