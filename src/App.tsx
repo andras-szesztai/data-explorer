@@ -38,6 +38,16 @@ const MainContainer = styled.div`
   user-select: none;
 `
 
+const ChartsMainContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 33.33%);
+  grid-column-gap: 8px;
+  grid-template-rows: repeat(2, 1fr);
+  grid-row-gap: 8px;
+`
+
 const App = () => {
   const [dataSetState, updateDataSetState] = React.useReducer(
     dataSetReducer,
@@ -69,17 +79,7 @@ const App = () => {
         dataSetState.availableGroups
       )
     }
-  }, [filterState, prevFilterState])
-
-  const [currentGroup, setCurrentGroup] = React.useState("")
-  React.useEffect(() => {
-    if (
-      prevDataSetState &&
-      !isEqual(prevDataSetState.availableGroups, dataSetState.availableGroups)
-    ) {
-      setCurrentGroup(dataSetState.availableGroups[0])
-    }
-  })
+  }, [filterState, prevFilterState, dataSetState])
 
   return (
     <MainContainer>
@@ -152,17 +152,6 @@ const App = () => {
                   marginBottom: 8,
                 }}
               >
-                {currentGroup && (
-                  <Radio.Group
-                    options={dataSetState.availableGroups.map(
-                      (type: string) => ({ value: type, label: type })
-                    )}
-                    onChange={(e) => setCurrentGroup(e.target.value)}
-                    value={currentGroup}
-                    optionType="button"
-                    buttonStyle="solid"
-                  />
-                )}
                 <Select
                   onChange={(value) => {
                     const selectedQuestion = dataSetState.availableQuestions.find(
@@ -177,30 +166,38 @@ const App = () => {
                   placeholder="Add a question as filter"
                   value={filterState.filterQuestions.length ? "" : undefined}
                 >
-                  {dataSetState.availableQuestions.length &&
-                    dataSetState.availableQuestions
-                      .filter((question: AvailableQuestion) =>
-                        dataSetState.availableGroups.length > 1
-                          ? question.group === currentGroup
-                          : true
-                      )
-                      .filter((question: AvailableQuestion) =>
-                        filterState.filterQuestions.length
-                          ? !filterState.filterQuestions.find(
-                              (q) => q.id === question.id
+                  {dataSetState.availableGroups.map((group: string) => {
+                    // TODO: make component
+                    return (
+                      <Select.OptGroup label={group} key={`${group}-chart-q`}>
+                        {dataSetState.availableQuestions
+                          .filter(
+                            (question: AvailableQuestion) =>
+                              question.group === group
+                          )
+                          .filter((question: AvailableQuestion) =>
+                            filterState.filterQuestions.length
+                              ? !filterState.filterQuestions.find(
+                                  (q) => q.id === question.id
+                                )
+                              : true
+                          )
+                          .sort((a: AvailableQuestion, b: AvailableQuestion) =>
+                            a.question.localeCompare(b.question)
+                          )
+                          .map((question: AvailableQuestion) => {
+                            return (
+                              <Select.Option
+                                key={question.id}
+                                value={question.question}
+                              >
+                                {question.question}
+                              </Select.Option>
                             )
-                          : true
-                      )
-                      .map((question: AvailableQuestion) => {
-                        return (
-                          <Select.Option
-                            key={question.id}
-                            value={question.question}
-                          >
-                            {question.question}
-                          </Select.Option>
-                        )
-                      })}
+                          })}
+                      </Select.OptGroup>
+                    )
+                  })}
                 </Select>
               </Space>
             </div>
@@ -253,7 +250,49 @@ const App = () => {
               height: "100%",
               position: "relative",
             }}
-          ></Card>
+            bodyStyle={{
+              height: "100%",
+            }}
+          >
+            <ChartsMainContainer>
+              <Card
+                title={
+                  <Select
+                    style={{
+                      width: "100%",
+                    }}
+                    showSearch
+                    allowClear
+                    placeholder="Add a question as chart"
+                    disabled={!dataSetState.availableQuestions.length}
+                    onClear={() => console.log("clear")}
+                    onSelect={(e) => console.log(e)}
+                  >
+                    {dataSetState.availableGroups.map((group: string) => {
+                      return (
+                        <Select.OptGroup label={group} key={`${group}-chart-q`}>
+                          {dataSetState.availableQuestions
+                            .filter((q: AvailableQuestion) => q.group === group && q.type)
+                            .sort(
+                              (a: AvailableQuestion, b: AvailableQuestion) =>
+                                a.question.localeCompare(b.question)
+                            )
+                            .map((q: AvailableQuestion) => (
+                              <Select.Option
+                                key={`${q.id}-chart`}
+                                value={q.question}
+                              >
+                                {q.question}
+                              </Select.Option>
+                            ))}
+                        </Select.OptGroup>
+                      )
+                    })}
+                  </Select>
+                }
+              />
+            </ChartsMainContainer>
+          </Card>
         </Col>
       </Row>
     </MainContainer>

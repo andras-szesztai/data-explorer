@@ -33,7 +33,7 @@ const FilterCheckBoxGroup = ({ updateFilterState, question }: Props) => {
     if (!isAllChecked && question.checkedOptions.length === question.options.length) {
       setIsAllChecked(true)
     }
-  }, [question.checkedOptions.length])
+  }, [question.checkedOptions.length, isAllChecked, question.options.length])
 
   return (
     <Space direction="vertical">

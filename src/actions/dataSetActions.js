@@ -1,5 +1,4 @@
 import uniq from 'lodash/uniq'
-import uniqBy from 'lodash/uniqBy'
 import { v4 as uuidv4 } from 'uuid'
 
 import { getQuestionType, getStatistics } from '../utils/filterHelpers.ts'
