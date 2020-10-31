@@ -1,25 +1,24 @@
 import React from 'react'
 import { Select, Space, Card, Radio, Collapse, Badge, Tooltip, Row, Col, Statistic } from 'antd'
+import { css } from '@emotion/core'
 import { useMeasure, usePrevious } from 'react-use'
 import isEqual from 'lodash/isEqual'
 import numeral from 'numeral'
 
-import FilterCheckBoxGroup from './components/FilterCheckBoxGroup/FilterCheckBoxGroup'
-import DataSetSelector from './components/DataSetSelector/DataSetSelector'
+import FilterCheckBoxGroup from '../components/FilterCheckBoxGroup/FilterCheckBoxGroup'
+import DataSetSelector from '../components/DataSetSelector/DataSetSelector'
 
-import { addFilter } from './actions/filtersActions'
-import { updateFilteredDataSet } from './actions/dataSetActions'
-import { dataSetReducer, initialDataSetState } from './reducers/dataSetReducer'
-import { filtersReducer, initialFiltersState } from './reducers/filtersReducer'
+import { addFilter } from '../actions/filtersActions'
+import { updateFilteredDataSet } from '../actions/dataSetActions'
+import { dataSetReducer, initialDataSetState } from '../reducers/dataSetReducer'
+import { filtersReducer, initialFiltersState } from '../reducers/filtersReducer'
 
-import { useInitializeAvailableDataSets } from './hooks'
-import { COLORS } from './constants/colors'
-import { CHART_AREA_HEIGHT } from './constants/dimensions'
-import { AvailableQuestion } from './types/dataSets'
+import { useInitializeAvailableDataSets } from '../hooks'
+import { COLORS } from '../constants/colors'
+import { CHART_AREA_HEIGHT } from '../constants/dimensions'
+import { AvailableQuestion } from '../types/dataSets'
 
-import './App.css';
-
-const App = () => {
+const IndexPage = () => {
   const [dataSetState, updateDataSetState] = React.useReducer(dataSetReducer, initialDataSetState)
   const prevDataSetState = usePrevious(dataSetState)
   const [filterState, updateFilterState] = React.useReducer(filtersReducer, initialFiltersState)
@@ -45,12 +44,12 @@ const App = () => {
 
   return (
     <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        padding: "16px 24px",
-        userSelect: "none",
-      }}
+      css={css`
+        width: 100vw;
+        height: 100vh;
+        padding: 16px 24px;
+        user-select: none;
+      `}
     >
       <Row gutter={[16, 16]}>
         <Col className="gutter-row" span={6}>
@@ -58,10 +57,10 @@ const App = () => {
         </Col>
         <Col className="gutter-row" span={18}>
           <Card
-            // css={css`
-            //   height: 100%;
-            //   padding-top: 12px;
-            // `}
+            css={css`
+              height: 100%;
+              padding-top: 12px;
+            `}
           >
             <Row gutter={8}>
               <Col span={1} />
@@ -88,18 +87,17 @@ const App = () => {
       <Row gutter={[16, 16]}>
         <Col className="gutter-row" span={6}>
           <Card
-            style={{
-              height: CHART_AREA_HEIGHT
-            }}
-            
+            css={css`
+              height: ${CHART_AREA_HEIGHT}px;
+            `}
           >
             <div ref={questionSearchRef}>
               <Space
                 direction="vertical"
-                // css={css`
-                //   width: 100%;
-                //   margin-bottom: 8px;
-                // `}
+                css={css`
+                  width: 100%;
+                  margin-bottom: 8px;
+                `}
               >
                 {currentGroup && (
                   <Radio.Group
@@ -142,12 +140,12 @@ const App = () => {
             </div>
             {!!filterState.filterQuestions.length && (
               <Collapse
-                // css={css`
-                //   max-height: ${CHART_AREA_HEIGHT - questionSearchRefHeight - 48}px;
-                //   overflow-y: scroll;
-                //   overflow-x: hidden;
-                //   margin-bottom: 8px;
-                // `}
+                css={css`
+                  max-height: ${CHART_AREA_HEIGHT - questionSearchRefHeight - 48}px;
+                  overflow-y: scroll;
+                  overflow-x: hidden;
+                  margin-bottom: 8px;
+                `}
               >
                 {filterState.filterQuestions.map(question => {
                   return (
@@ -174,11 +172,12 @@ const App = () => {
         </Col>
         <Col className="gutter-row" span={18}>
           <Card
-            // css={css`
-            //   height: 100%;
-            //   position: relative;
-            // `}
+            css={css`
+              height: 100%;
+              position: relative;
+            `}
           >
+            <div css={css``} />
           </Card>
         </Col>
       </Row>
@@ -186,4 +185,4 @@ const App = () => {
   )
 }
 
-export default App
+export default IndexPage
