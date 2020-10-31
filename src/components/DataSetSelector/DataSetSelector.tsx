@@ -1,10 +1,9 @@
-import React from 'react'
-import { Card, Select } from 'antd'
-import { css } from '@emotion/core'
+import React from "react"
+import { Card, Select } from "antd"
 
-import { FilterActions } from '../../reducers/filtersReducer'
+import { FilterActions } from "../../reducers/filtersReducer"
 
-import { useFetchActiveDataSet } from '../../hooks'
+import { useFetchActiveDataSet } from "../../hooks"
 
 interface Props {
   dataSetState: any
@@ -12,20 +11,27 @@ interface Props {
   updateFilterState: React.Dispatch<FilterActions>
 }
 
-const DataSetSelector = ({ dataSetState, updateDataSetState, updateFilterState }: Props) => {
-  const setActiveDataSetName = useFetchActiveDataSet(updateDataSetState, updateFilterState)
+const DataSetSelector = ({
+  dataSetState,
+  updateDataSetState,
+  updateFilterState,
+}: Props) => {
+  const setActiveDataSetName = useFetchActiveDataSet(
+    updateDataSetState,
+    updateFilterState
+  )
 
   return (
     <Card
       title="Survey Explorer"
-      css={css`
-        height: 100%;
-      `}
+      style={{
+        height: "100%",
+      }}
     >
       <Select
-        css={css`
-          width: 100%;
-        `}
+        style={{
+          width: "100%",
+        }}
         onChange={(value: string) => setActiveDataSetName(value)}
         loading={!dataSetState.availableDataSets.length}
         showSearch
