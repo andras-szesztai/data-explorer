@@ -11,13 +11,12 @@ import { select } from "d3-selection"
 import { easeCubicInOut } from "d3-ease"
 import "d3-transition"
 import { useMeasure, usePrevious } from "react-use"
+import { Badge, Typography } from "antd"
 
 import { CHART_DOMAINS } from "../../constants/chartDomains.ts"
 import { CHART_COLORS } from "../../constants/colors.ts"
 import { COLORS } from "../../constants/colors"
 import { DURATION_MILLISECOND } from "../../constants/animations"
-import { exit } from "process"
-import { Badge } from "antd"
 
 const ChartContainer = styled.div`
   height: 100%;
@@ -30,6 +29,35 @@ const ChartSvg = styled.svg`
   width: 100%;
   height: 100%;
 `
+
+const TooltipContainer = styled.div`
+  position: absolute;
+  top: ${(props) => props.top}px;
+  left: ${(props) => props.left}px;
+  z-index: 100;
+  pointer-events: none;
+  background: #fff;
+  border: 1px solid ${(props) => props.color};
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: ${(props) => props.color};
+
+  :after {
+    left: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: "";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(136, 183, 213, 0);
+    border-left-color: ${(props) => props.color};
+    border-width: 8px;
+    margin-top: -8px;
+  }
+`
+
 const margin = {
   top: 16,
   right: 0,
@@ -39,14 +67,16 @@ const margin = {
 
 const VerticalBarChart = ({ data, question }) => {
   const [divRef, { width, height }] = useMeasure()
+  const [
+    tooltipRef,
+    { width: tooltipWidth, height: tooltipHeight },
+  ] = useMeasure()
   const prevWidth = usePrevious(width)
   const prevData = usePrevious(data)
 
   const [hovered, setHovered] = React.useState(undefined)
-  console.log(hovered)
 
   const createUpdateElements = () => {
-    // TODO: chop it up
     const xScale = scaleBand()
       .domain(Object.keys(CHART_DOMAINS[question.type]))
       .range([margin.left, width - margin.right])
@@ -73,6 +103,16 @@ const VerticalBarChart = ({ data, question }) => {
       })
       combinedStackedData = [...combinedStackedData, stackGen([dataObj])]
     })
+
+    const addMouseOver = (g) =>
+      g.on("mouseover", (_, d) =>
+        setHovered({
+          yPosition: yScale(d[0][1]),
+          xPosition: xScale(d[0].data.group),
+          label: d.key,
+          value: d[0].data[d.key],
+        })
+      )
     select(chartAreaRef.current)
       .selectAll(".rect-group")
       .data(combinedStackedData)
@@ -96,11 +136,11 @@ const VerticalBarChart = ({ data, question }) => {
             .attr("width", xScale.bandwidth())
             .attr("y", (d) => yScale(d[0][1]))
             .attr("height", (d) => yScale(d[0][0]) - yScale(d[0][1]))
-            .on("mouseover", (_, d) => console.log(yScale(d[0][1])))
+            .call(addMouseOver)
             .on("mouseout", () => setHovered(undefined))
             .call((enter) => enter),
         (update) =>
-          update.call((update) =>
+          update.call(addMouseOver).call((update) =>
             update
               .transition()
               .duration(DURATION_MILLISECOND.sm)
@@ -193,6 +233,24 @@ const VerticalBarChart = ({ data, question }) => {
           }}
         />
       </div>
+      {hovered && (
+        <TooltipContainer
+          ref={tooltipRef}
+          top={hovered.yPosition - tooltipHeight / 2}
+          left={hovered.xPosition - tooltipWidth - (16 + 10)}
+          color={CHART_COLORS[question.type][hovered.label]}
+        >
+          {hovered.label}:{" "}
+          <Typography.Text
+            style={{
+              color: CHART_COLORS[question.type][hovered.label],
+            }}
+            strong
+          >
+            {numeral(hovered.value).format("0.00%")}
+          </Typography.Text>
+        </TooltipContainer>
+      )}
       <ChartSvg>
         <g ref={chartAreaRef} />
         <line
