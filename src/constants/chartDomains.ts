@@ -1,4 +1,4 @@
-export const CHART_DOMAINS = {
+export const CHART_DOMAINS: {[key: string]:{ [key: string]: string[]}} = {
   accuracy: {
     "No answer": ["No answer"],
     "Inaccurate": ['Very inaccurate', "Somewhat inaccurate"],
