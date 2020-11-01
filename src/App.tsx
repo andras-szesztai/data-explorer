@@ -93,6 +93,7 @@ const App = () => {
             dataSetState={dataSetState}
             updateDataSetState={updateDataSetState}
             updateFilterState={updateFilterState}
+            updateChartState={updateChartState}
           />
         </Col>
         <Col className="gutter-row" span={18}>

@@ -2,6 +2,7 @@ import React from "react"
 import { Card, Select } from "antd"
 
 import { FilterActions } from "../../reducers/filtersReducer"
+import { ChartActions } from "../../reducers/chartsReducer"
 
 import { useFetchActiveDataSet } from "../../hooks"
 
@@ -9,16 +10,19 @@ interface Props {
   dataSetState: any
   updateDataSetState: React.DispatchWithoutAction
   updateFilterState: React.Dispatch<FilterActions>
+  updateChartState: React.Dispatch<ChartActions>
 }
 
 const DataSetSelector = ({
   dataSetState,
   updateDataSetState,
   updateFilterState,
+  updateChartState
 }: Props) => {
   const setActiveDataSetName = useFetchActiveDataSet(
     updateDataSetState,
-    updateFilterState
+    updateFilterState,
+    updateChartState
   )
 
   return (

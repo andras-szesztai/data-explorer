@@ -7,11 +7,12 @@ import { db } from  '../../firebase'
 
 import { updateActiveDataSet } from '../../actions/dataSetActions'
 import { removeAllFilters } from '../../actions/filtersActions.ts'
+import { removeAllCharts } from '../../actions/chartsActions'
 
 import { COLORS } from '../../constants/colors.ts'
 import { DURATION_SECOND } from '../../constants/animations.ts'
 
-const useFetchActiveDataSet = (updateDataSetState, updateFilterState) => {
+const useFetchActiveDataSet = (updateDataSetState, updateFilterState, updateChartState) => {
   const datasetUpdatedNotification = () => {
     const args = {
       message: 'Dataset has been updated!',
@@ -41,11 +42,12 @@ const useFetchActiveDataSet = (updateDataSetState, updateFilterState) => {
         })
         updateActiveDataSet(updateDataSetState, newDataSet, document.data().groups)
         updateFilterState(removeAllFilters())
+        updateChartState(removeAllCharts())
         datasetUpdatedNotification()
       }
       getActiveDataSet()
     }
-  }, [activeDataSetName])
+  }, [activeDataSetName, prevActiveDataSetName, updateFilterState, updateDataSetState])
 
   return setActiveDataSetName
 }
