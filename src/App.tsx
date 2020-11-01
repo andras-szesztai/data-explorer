@@ -29,7 +29,7 @@ import { COLORS } from "./constants/colors"
 import { CHART_AREA_HEIGHT } from "./constants/dimensions"
 import { AvailableQuestion } from "./types/dataSets"
 
-import "./styles/App.css"
+import "./styles/App.less"
 import ChartCard from "./components/ChartCard/ChartCard"
 
 const MainContainer = styled.div`

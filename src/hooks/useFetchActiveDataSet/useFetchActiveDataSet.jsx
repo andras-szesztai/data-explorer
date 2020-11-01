@@ -17,7 +17,7 @@ const useFetchActiveDataSet = (updateDataSetState, updateFilterState, updateChar
     const args = {
       message: 'Dataset has been updated!',
       duration: DURATION_SECOND.lg,
-      icon: <CheckCircleFilled style={{ color: COLORS.primary }} />
+      icon: <CheckCircleFilled style={{ color: COLORS.primaryBlue }} />
     }
     notification.open(args)
   }

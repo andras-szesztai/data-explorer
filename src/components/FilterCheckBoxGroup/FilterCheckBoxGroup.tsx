@@ -20,7 +20,7 @@ const FilterCheckBoxGroup = ({ updateFilterState, question }: Props) => {
     const args = {
       message: 'Question removed from filters!',
       duration: DURATION_SECOND.lg,
-      icon: <CheckCircleFilled style={{ color: COLORS.primary }} />
+      icon: <CheckCircleFilled style={{ color: COLORS.primaryBlue }} />
     }
     notification.open(args)
   }
@@ -67,7 +67,7 @@ const FilterCheckBoxGroup = ({ updateFilterState, question }: Props) => {
         <Tooltip placement="topLeft" title="Remove question">
           <Button
             size="small"
-            danger
+            style={{ background: COLORS.secondaryOrange, borderColor: COLORS.secondaryOrange }}
             type="primary"
             icon={<DeleteFilled />}
             shape="round"
