@@ -11,7 +11,6 @@ import {
 import { AvailableQuestion } from "../../types/dataSets"
 import useUpdateChartData from "../../hooks/useUpdateChartData/useUpdateChartData"
 import VerticalBarChart from "../VerticalBarChart/VerticalBarChart"
-
 interface Props {
   dataSetState: any
   chart: AvailableQuestion
@@ -47,7 +46,7 @@ const ChartCard = ({
     <Card
       bodyStyle={{
         height: "calc(100% - 64px)",
-        padding: 12
+        padding: 12,
       }}
       title={
         <Select
@@ -77,7 +76,10 @@ const ChartCard = ({
               <Select.OptGroup label={group} key={`${group}-chart-q`}>
                 {availableQuestions
                   .filter((q: AvailableQuestion) => q.group === group && q.type)
-                  .filter((q: AvailableQuestion) => !currSelectedQuestions.includes(q.question))
+                  .filter(
+                    (q: AvailableQuestion) =>
+                      !currSelectedQuestions.includes(q.question)
+                  )
                   .sort((a: AvailableQuestion, b: AvailableQuestion) =>
                     a.question.localeCompare(b.question)
                   )
@@ -92,10 +94,9 @@ const ChartCard = ({
         </Select>
       }
     >
-      {
-        !!chartData.length &&
+      {!!chartData.length && (
         <VerticalBarChart data={chartData} question={chart} />
-      }
+      )}
     </Card>
   )
 }

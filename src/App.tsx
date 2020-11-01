@@ -226,7 +226,7 @@ const App = () => {
                         <>
                           <Badge
                             count={question.group}
-                            style={{ backgroundColor: COLORS.primary }}
+                            style={{ backgroundColor: COLORS.primaryBlue }}
                           />{" "}
                           {question.question}{" "}
                           {question.options.length !==

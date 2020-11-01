@@ -16,6 +16,8 @@ import { CHART_DOMAINS } from "../../constants/chartDomains.ts"
 import { CHART_COLORS } from "../../constants/colors.ts"
 import { COLORS } from "../../constants/colors"
 import { DURATION_MILLISECOND } from "../../constants/animations"
+import { exit } from "process"
+import { Badge } from "antd"
 
 const ChartContainer = styled.div`
   height: 100%;
@@ -40,14 +42,16 @@ const VerticalBarChart = ({ data, question }) => {
   const prevWidth = usePrevious(width)
   const prevData = usePrevious(data)
 
-  const getXScale = () =>
-    scaleBand()
+  const [hovered, setHovered] = React.useState(undefined)
+  console.log(hovered)
+
+  const createUpdateElements = () => {
+    // TODO: chop it up
+    const xScale = scaleBand()
       .domain(Object.keys(CHART_DOMAINS[question.type]))
       .range([margin.left, width - margin.right])
       .paddingInner(0.4)
       .paddingOuter(0.25)
-
-  const createUpdateElements = (xScale) => {
     const yValues = Object.values(groupBy(data, "labelGroup"))
       .map((d) => {
         return {
@@ -75,13 +79,12 @@ const VerticalBarChart = ({ data, question }) => {
       .enter()
       .append("g")
       .attr("class", "rect-group")
-
     select(chartAreaRef.current)
       .selectAll(".rect-group")
       .selectAll(".label-rect")
       .data(
         (d) => d,
-        (d) => d.key
+        (d) => d.key + question.question
       )
       .join(
         (enter) =>
@@ -93,22 +96,24 @@ const VerticalBarChart = ({ data, question }) => {
             .attr("width", xScale.bandwidth())
             .attr("y", (d) => yScale(d[0][1]))
             .attr("height", (d) => yScale(d[0][0]) - yScale(d[0][1]))
+            .on("mouseover", (_, d) => console.log(yScale(d[0][1])))
+            .on("mouseout", () => setHovered(undefined))
             .call((enter) => enter),
         (update) =>
           update.call((update) =>
             update
               .transition()
               .duration(DURATION_MILLISECOND.sm)
-              .each((d) =>
-                console.log("calc", yScale.domain(), d[0][0], d[0][1])
-              )
+              .attr("x", (d) => xScale(d[0].data.group))
+              .attr("width", xScale.bandwidth())
               .attr("y", (d) => yScale(d[0][1] || 0))
               .attr("height", (d) => yScale(d[0][0]) - yScale(d[0][1] || 0))
-          )
+          ),
+        (exit) => exit.remove()
       )
     select(chartAreaRef.current)
       .selectAll(".bar-text")
-      .data(yValues, (d) => d.labelGroup)
+      .data(yValues, (d) => d.labelGroup + question.question)
       .join(
         (enter) =>
           enter
@@ -126,42 +131,68 @@ const VerticalBarChart = ({ data, question }) => {
               .transition()
               .duration(DURATION_MILLISECOND.sm)
               .ease(easeCubicInOut)
+              .attr("x", (d) => xScale(d.labelGroup) + xScale.bandwidth() / 2)
               .attr("y", (d) => yScale(d.value || 0))
               .text((d) => numeral(d.value || 0).format("0.0%"))
-          )
+          ),
+        (exit) => exit.remove()
+      )
+    select(chartAreaRef.current)
+      .selectAll(".axis-text")
+      .data(xScale.domain(), (d) => d + question.question)
+      .join(
+        (enter) =>
+          enter
+            .append("text")
+            .attr("class", "axis-text")
+            .attr("fill", COLORS.primaryBlack)
+            .attr("x", (d) => xScale(d) + xScale.bandwidth() / 2)
+            .attr("y", height - 2.5)
+            .attr("text-anchor", "middle")
+            .text((d) => d),
+        (update) =>
+          update.call((update) =>
+            update
+              .transition()
+              .duration(DURATION_MILLISECOND.sm)
+              .ease(easeCubicInOut)
+              .attr("x", (d) => xScale(d) + xScale.bandwidth() / 2)
+              .attr("y", height - 2.5)
+              .text((d) => d)
+          ),
+        (exit) => exit.remove()
       )
   }
 
   const isInitialized = React.useRef(false)
   React.useEffect(() => {
-    if (!isInitialized.current && width && data) {
-      isInitialized.current = true
-      const xScale = getXScale()
-      createUpdateElements(xScale)
-      select(chartAreaRef.current)
-        .selectAll(".axis-text")
-        .data(xScale.domain())
-        .enter()
-        .append("text")
-        .attr("class", "axis-text")
-        .attr("fill", COLORS.primaryBlack)
-        .attr("x", (d) => xScale(d) + xScale.bandwidth() / 2)
-        .attr("y", height - 2.5)
-        .attr("text-anchor", "middle")
-        .text((d) => d)
-    }
-
     if (
-      isInitialized.current &&
-      (width !== prevWidth || !isEqual(data, prevData))
+      !isInitialized.current
+        ? width && data
+        : width !== prevWidth || !isEqual(data, prevData)
     ) {
-      createUpdateElements(getXScale())
+      isInitialized.current = true
+      createUpdateElements()
     }
   })
 
   const chartAreaRef = React.useRef()
   return (
     <ChartContainer ref={divRef}>
+      <div
+        style={{
+          position: "absolute",
+          left: -8,
+          top: -8,
+        }}
+      >
+        <Badge
+          count={question.group}
+          style={{
+            backgroundColor: COLORS.primaryBlue,
+          }}
+        />
+      </div>
       <ChartSvg>
         <g ref={chartAreaRef} />
         <line
