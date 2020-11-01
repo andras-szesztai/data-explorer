@@ -60,6 +60,7 @@ const ChartCard = ({
           }
           disabled={isDisabled}
           onClear={() => updateChartState(removeChartQuestion(chartKey))}
+          value={chart.question}
           onSelect={(e) => {
             updateChartState(
               addChartQuestion(
