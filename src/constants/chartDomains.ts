@@ -9,8 +9,8 @@ export const CHART_DOMAINS: { [key: string]: { [key: string]: string[] } } = {
     Satisfied: ["Somewhat satisfied", "Very satisfied"],
   },
   agree: {
-    Disagree: ["Very disagree", "Somewhat disagree"],
-    Agree: [ "Somewhat agree", "Very agree"],
+    Disagree: ["Totally disagree", "Somewhat disagree"],
+    Agree: [ "Somewhat agree", "Totally agree"],
   },
   selection: {
     Selected: ["Selected"],
