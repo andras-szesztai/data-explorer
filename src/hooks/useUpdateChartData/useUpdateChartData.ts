@@ -9,13 +9,13 @@ import { QUESTION_TYPES } from '../../constants/filterValues'
 
 import { ChartDataObject } from '../../types/charts'
 import { AvailableQuestion, DataSetStatistics } from '../../types/dataSets'
+import { usePrevious } from 'react-use'
 
 interface Props {
   chart: AvailableQuestion
   prevChart: AvailableQuestion | undefined
   filteredDataSetStatistics: DataSetStatistics[],
   filteredDataSet: {[key: string]: string }[]
-  prevFilteredDataSet: {[key: string]: string }[]
 }
 
 const useUpdateChartData = ({
@@ -23,8 +23,8 @@ const useUpdateChartData = ({
   chart,
   prevChart,
   filteredDataSet,
-  prevFilteredDataSet
 }: Props) => {
+  const prevFilteredDataSetStatistics = usePrevious(filteredDataSetStatistics)
   const [chartData, setChartData] = useState([] as ChartDataObject[])
   useEffect(() => {
     const makeChartData = () => {
@@ -55,15 +55,15 @@ const useUpdateChartData = ({
       if (isEmpty(chart) && chartData.length)
         setChartData([] as ChartDataObject[])
     }
-    if (!isEmpty(chart) && !isEqual(filteredDataSet, prevFilteredDataSet)) {
+    if (!isEmpty(chart) && !isEqual(filteredDataSetStatistics, prevFilteredDataSetStatistics)) {
       setChartData(makeChartData())
     }
   }, [
     chart,
     filteredDataSet,
     prevChart,
-    prevFilteredDataSet,
     filteredDataSetStatistics,
+    prevFilteredDataSetStatistics,
     chartData,
   ])
 

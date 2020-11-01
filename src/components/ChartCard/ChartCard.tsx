@@ -39,17 +39,15 @@ const ChartCard = ({
 }: Props) => {
   const currSelectedQuestions = Object.values(chartState).map((d) => d.question)
   const prevChart = usePrevious(chart)
-  const prevFilteredDataSet = usePrevious(filteredDataSet)
 
   const chartData = useUpdateChartData({
     filteredDataSetStatistics,
     chart,
     prevChart,
     filteredDataSet,
-    prevFilteredDataSet,
   })
-
   console.log("chartData", chartData)
+
   const isDisabled = !availableQuestions.length
   return (
     <Card

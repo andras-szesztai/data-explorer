@@ -8,7 +8,7 @@ export const QUESTION_TYPES: {[key: string]: string[]} = {
   ],
   satisfaction: [
     'No answer',
-    'Very dissatisfied,',
+    'Very dissatisfied',
     'Somewhat dissatisfied',
     'Neither satisfied nor dissatisfied',
     'Somewhat satisfied',

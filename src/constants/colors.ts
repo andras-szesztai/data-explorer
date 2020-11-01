@@ -16,5 +16,41 @@ export const CHART_COLORS = {
     'Somewhat inaccurate': COLORS.secondaryOrange,
     'Somewhat accurate': COLORS.secondaryPurple,
     'Very accurate': COLORS.secondaryTeal
+  },
+  satisfaction: {
+    'No answer': COLORS.primaryGray,
+    'Very dissatisfied': COLORS.secondaryMagenta,
+    'Somewhat dissatisfied': COLORS.secondaryOrange,
+    'Neither satisfied nor dissatisfied': COLORS.primaryGray,
+    'Somewhat satisfied': COLORS.secondaryPurple,
+    'Very satisfied': COLORS.secondaryTeal
+  },
+  agree: {
+    'No answer': COLORS.primaryGray,
+    'Totally disagree': COLORS.secondaryMagenta,
+    'Somewhat disagree': COLORS.secondaryOrange,
+    'Somewhat agree': COLORS.secondaryPurple,
+    'Totally agree': COLORS.secondaryTeal
+  },
+  selection: {
+    'Selected': COLORS.primaryBlue,
+    'Not selected': COLORS.primaryBlue
+  },
+  language: {
+    'No answer': COLORS.primaryBlue,
+    'None': COLORS.primaryBlue,
+    'Basic': COLORS.primaryBlue,
+    'Intermediate': COLORS.primaryBlue,
+    'Fluent': COLORS.primaryBlue,
+  },
+  sex: {
+    'Male': COLORS.primaryBlue,
+    'Female': COLORS.primaryBlue,
+    'No answer': COLORS.primaryBlue,
+  },
+  boolean: {
+    'Yes': COLORS.primaryBlue,
+    'No': COLORS.primaryBlue,
+    'No answer': COLORS.primaryBlue,
   }
 }
