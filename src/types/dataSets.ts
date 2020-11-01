@@ -5,3 +5,8 @@ export interface AvailableQuestion {
   group: string
   options: string[]
 }
+
+export interface DataSetStatistics  {
+  label: string
+  value: number
+}

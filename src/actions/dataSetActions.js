@@ -26,7 +26,7 @@ export const updateActiveDataSet = (dispatch, newDataSet, availableGroups) => {
       type: questionType,
       group,
       options: questionType
-        ? Object.values(QUESTION_TYPES[questionType])
+        ? QUESTION_TYPES[questionType]
             .filter(t => options.includes(t))
             .reverse()
         : options.sort((a, b) => String(a).localeCompare(b))

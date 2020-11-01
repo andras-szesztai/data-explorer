@@ -26,10 +26,14 @@ export const getQuestionType = (answerOptions: string) => {
   return false
 }
 
+export const getUniqIdsLength = (data: any[], type: string) => {
+  return uniq(data.map(d => d[`Respondent ID - ${type}`])).filter(Boolean).length
+}
+
 export const getStatistics = (availableGroups: string[], dataSet: any[]) => {
   const statistics = availableGroups.map(type => ({
     label: type,
-    value: uniq(dataSet.map(d => d[`Respondent ID - ${type}`])).filter(Boolean).length
+    value: getUniqIdsLength(dataSet, type)
   }))
   return statistics
 }
