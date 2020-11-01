@@ -266,9 +266,11 @@ const App = () => {
                 return (
                   <ChartCard
                     key={i}
-                    dataSetState={dataSetState}
+                    chartKey={i + 1}
                     chart={chart}
+                    dataSetState={dataSetState}
                     chartState={chartState}
+                    updateChartState={updateChartState}
                   />
                 )
               })}

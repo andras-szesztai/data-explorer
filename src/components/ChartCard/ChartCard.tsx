@@ -1,21 +1,35 @@
 import React from "react"
 import { Card, Select } from "antd"
 
+import { ChartActions } from "../../reducers/chartsReducer"
+
 import { AvailableQuestion } from "../../types/dataSets"
+import {
+  addChartQuestion,
+  removeChartQuestion,
+} from "../../actions/chartsActions"
 
 interface Props {
   dataSetState: any
   chart: AvailableQuestion
+  chartKey: number
   chartState: { [key: number]: AvailableQuestion }
+  updateChartState: React.Dispatch<ChartActions>
 }
 
 const ChartCard = ({
-  dataSetState: { availableQuestions, availableGroups },
+  dataSetState: { availableQuestions, availableGroups, filteredDataSet },
   chart,
-  chartState
+  chartKey,
+  chartState,
+  updateChartState,
 }: Props) => {
-  const currSelectedQuestions = Object.values(chartState).map(d => d.question)
+  const currSelectedQuestions = Object.values(chartState).map((d) => d.question)
 
+  const [ chartData, setChartData ] = React.useState([])
+
+  // prepare dataset values, domain for chart
+  
   const isDisabled = !availableQuestions.length
   return (
     <Card
@@ -30,8 +44,17 @@ const ChartCard = ({
             isDisabled ? "Select a dataset to start" : "Add a question as chart"
           }
           disabled={isDisabled}
-          onClear={() => console.log("clear")}
-          onSelect={(e) => console.log(e)}
+          onClear={() => updateChartState(removeChartQuestion(chartKey))}
+          onSelect={(e) => {
+            updateChartState(
+              addChartQuestion(
+                availableQuestions.find(
+                  (q: AvailableQuestion) => q.question === e
+                ),
+                chartKey
+              )
+            )
+          }}
         >
           {availableGroups.map((group: string) => {
             return (

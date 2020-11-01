@@ -1,4 +1,4 @@
-import { addChartQuestion, ADD_CHART_QUESTION, removeChartQuestion, REMOVE_CHART_QUESTION } from '../actions/chartsActions'
+import { addChartQuestion, ADD_CHART_QUESTION, removeChartQuestion,REMOVE_CHART_QUESTION } from '../actions/chartsActions'
 
 import { AvailableQuestion } from '../types/dataSets'
 
@@ -6,15 +6,17 @@ export const initialChartsState = { 1: {} as AvailableQuestion, 2: {} as Availab
 
 export type ChartActions = ReturnType<typeof addChartQuestion | typeof removeChartQuestion>
 
-export const chartsReducer = (state = initialChartsState, action: ChartActions) => {
+export const chartsReducer = (state= initialChartsState, action: ChartActions) => {
   switch (action.type) {
     case ADD_CHART_QUESTION:
       return {
-        ...state
+        ...state,
+        [action.questionToAdd.key]: action.questionToAdd.questionObj
       }
-    case REMOVE_CHART_QUESTION:
-      return {
-        ...state
+      case REMOVE_CHART_QUESTION:
+        return {
+        ...state,
+        [action.questionToRemove]: {} as AvailableQuestion
       }
     default:
       return state
