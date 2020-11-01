@@ -268,6 +268,7 @@ const App = () => {
                     key={i}
                     dataSetState={dataSetState}
                     chart={chart}
+                    chartState={chartState}
                   />
                 )
               })}

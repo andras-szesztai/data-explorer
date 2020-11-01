@@ -1,39 +1,21 @@
-import { addFilter } from '../actions/filtersActions'
-import { ChartValueObject } from '../types/charts'
+import { addChartQuestion, ADD_CHART_QUESTION, removeChartQuestion, REMOVE_CHART_QUESTION } from '../actions/chartsActions'
 
-interface FullChartObject {
-  question: string
-  values: ChartValueObject[]
-}
+import { AvailableQuestion } from '../types/dataSets'
 
-interface State {
-  [key: number]: FullChartObject
-}
+export const initialChartsState = { 1: {} as AvailableQuestion, 2: {} as AvailableQuestion, 3: {} as AvailableQuestion, 4: {} as AvailableQuestion, 5: {} as AvailableQuestion, 6: {} as AvailableQuestion}
 
-export const initialChartsState = { 1: {
-  question: "",
-  values: [] as ChartValueObject[]
-}, 2: {
-  question: "",
-  values: [] as ChartValueObject[]
-}, 3: {
-  question: "",
-  values: [] as ChartValueObject[]
-}, 4: {
-  question: "",
-  values: [] as ChartValueObject[]
-}, 5: {
-  question: "",
-  values: [] as ChartValueObject[]
-}, 6: {
-  question: "",
-  values: [] as ChartValueObject[]
-}}
+export type ChartActions = ReturnType<typeof addChartQuestion | typeof removeChartQuestion>
 
-export type ChartActions = ReturnType<typeof addFilter>
-
-export const chartsReducer = (state: State, action: ChartActions) => {
+export const chartsReducer = (state = initialChartsState, action: ChartActions) => {
   switch (action.type) {
+    case ADD_CHART_QUESTION:
+      return {
+        ...state
+      }
+    case REMOVE_CHART_QUESTION:
+      return {
+        ...state
+      }
     default:
       return state
   }

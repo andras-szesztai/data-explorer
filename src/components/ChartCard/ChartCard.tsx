@@ -1,18 +1,22 @@
 import React from "react"
 import { Card, Select } from "antd"
 
-import { ChartValueObject } from "../../types/charts"
 import { AvailableQuestion } from "../../types/dataSets"
 
 interface Props {
   dataSetState: any
-  chart: ChartValueObject
+  chart: AvailableQuestion
+  chartState: { [key: number]: AvailableQuestion }
 }
 
-const ChartCard = ({ dataSetState, chart }: Props) => {
-  console.log(chart)
+const ChartCard = ({
+  dataSetState: { availableQuestions, availableGroups },
+  chart,
+  chartState
+}: Props) => {
+  const currSelectedQuestions = Object.values(chartState).map(d => d.question)
 
-  const isDisabled = !dataSetState.availableQuestions.length
+  const isDisabled = !availableQuestions.length
   return (
     <Card
       title={
@@ -29,10 +33,10 @@ const ChartCard = ({ dataSetState, chart }: Props) => {
           onClear={() => console.log("clear")}
           onSelect={(e) => console.log(e)}
         >
-          {dataSetState.availableGroups.map((group: string) => {
+          {availableGroups.map((group: string) => {
             return (
               <Select.OptGroup label={group} key={`${group}-chart-q`}>
-                {dataSetState.availableQuestions
+                {availableQuestions
                   .filter((q: AvailableQuestion) => q.group === group && q.type)
                   .sort((a: AvailableQuestion, b: AvailableQuestion) =>
                     a.question.localeCompare(b.question)
