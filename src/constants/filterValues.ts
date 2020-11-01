@@ -22,8 +22,8 @@ export const QUESTION_TYPES: {[key: string]: string[]} = {
     'Totally agree'
   ],
   selection: [
-    'Selected',
-    'Not selected'
+    'Not selected',
+    'Selected'
   ],
   language: [
     'No answer',
@@ -33,14 +33,14 @@ export const QUESTION_TYPES: {[key: string]: string[]} = {
     'Fluent'
   ],
   sex: [
-    'Male',
+    'No answer',
     'Female',
-    'No answer'
+    'Male',
   ],
   boolean: [
-    'Yes',
+    'No answer',
     'No',
-    'No answer'
+    'Yes',
   ]
 }
 

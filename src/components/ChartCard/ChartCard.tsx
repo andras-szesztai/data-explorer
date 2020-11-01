@@ -1,8 +1,6 @@
 import React from "react"
 import { Card, Select } from "antd"
 import { usePrevious } from "react-use"
-import isEqual from "lodash/isEqual"
-import isEmpty from "lodash/isEmpty"
 
 import { ChartActions } from "../../reducers/chartsReducer"
 import {
@@ -10,12 +8,9 @@ import {
   removeChartQuestion,
 } from "../../actions/chartsActions"
 
-import { QUESTION_TYPES } from "../../constants/filterValues"
-import { AvailableQuestion, DataSetStatistics } from "../../types/dataSets"
-import { CHART_DOMAINS } from "../../constants/chartDomains"
-import { getUniqIdsLength } from "../../utils/filterHelpers"
-import { ChartDataObject } from "../../types/charts"
+import { AvailableQuestion } from "../../types/dataSets"
 import useUpdateChartData from "../../hooks/useUpdateChartData/useUpdateChartData"
+import VerticalBarChart from "../VerticalBarChart/VerticalBarChart"
 
 interface Props {
   dataSetState: any
@@ -46,11 +41,14 @@ const ChartCard = ({
     prevChart,
     filteredDataSet,
   })
-  console.log("chartData", chartData)
 
   const isDisabled = !availableQuestions.length
   return (
     <Card
+      bodyStyle={{
+        height: "calc(100% - 64px)",
+        padding: 12
+      }}
       title={
         <Select
           style={{
@@ -79,6 +77,7 @@ const ChartCard = ({
               <Select.OptGroup label={group} key={`${group}-chart-q`}>
                 {availableQuestions
                   .filter((q: AvailableQuestion) => q.group === group && q.type)
+                  .filter((q: AvailableQuestion) => !currSelectedQuestions.includes(q.question))
                   .sort((a: AvailableQuestion, b: AvailableQuestion) =>
                     a.question.localeCompare(b.question)
                   )
@@ -92,7 +91,12 @@ const ChartCard = ({
           })}
         </Select>
       }
-    />
+    >
+      {
+        !!chartData.length &&
+        <VerticalBarChart data={chartData} question={chart} />
+      }
+    </Card>
   )
 }
 
