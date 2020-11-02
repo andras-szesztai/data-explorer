@@ -236,7 +236,7 @@ const App = () => {
                               placement="topLeft"
                               title="This question is actively filtering the dataset"
                             >
-                              <Badge count="Active" />
+                              <Badge count="Active"    style={{ backgroundColor: COLORS.secondaryOrange }} />
                             </Tooltip>
                           )}
                         </>

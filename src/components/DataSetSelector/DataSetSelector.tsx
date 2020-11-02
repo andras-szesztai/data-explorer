@@ -27,7 +27,7 @@ const DataSetSelector = ({
 
   return (
     <Card
-      title="Survey Explorer"
+      title="Data Explorer"
       style={{
         height: "100%",
       }}
