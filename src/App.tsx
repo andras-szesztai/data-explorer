@@ -16,6 +16,7 @@ import {
 import { UserState } from "./types/user"
 
 import "./styles/App.less"
+import Confirmation from "./components/Confirmation/Confirmation"
 
 const MainContainer = styled.div`
   width: 100vw;
@@ -42,6 +43,7 @@ const App = () => {
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/register" component={Register} />
+              <Route path="/confirmation" component={Confirmation} />
               <ProtectedRoute path="/" component={Dashboard} />
             </Switch>
           </BrowserRouter>

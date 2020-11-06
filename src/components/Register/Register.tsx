@@ -113,7 +113,7 @@ const Login = (props: any) => {
           console.log("values", values)
           return (
             <Form {...layout} onFinish={handleSubmit}>
-              <Form.Item label="Email" name="email">
+              <Form.Item label="Email" name="email" >
                 <Input onChange={handleChange} onBlur={handleBlur} />
               </Form.Item>
               <Form.Item label="Password" name="password">

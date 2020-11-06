@@ -1,13 +1,10 @@
 import React from "react"
 import styled from "styled-components"
-import { Form, Input, Button, Space } from "antd"
-import { useHistory, Link } from "react-router-dom"
+import { Form, Input, Button, Space, message } from "antd"
 
 import { auth } from "../../firebase"
 
-import { loginUser } from "../../actions/userActions"
-
-import { UserDispatchContext, UserStateContext } from "../../App"
+import { MailOutlined } from "@ant-design/icons"
 
 const MainContainer = styled.div`
   height: 100%;
@@ -16,90 +13,47 @@ const MainContainer = styled.div`
   align-items: center;
 `
 
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 32 },
-}
-
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-}
-
-const Login = (props: any) => {
-  const userState = React.useContext(UserStateContext)
-  const updateUserState = React.useContext(UserDispatchContext)
-
-  const history = useHistory()
-
-  const getUser = async ({
-    password,
-    email,
-  }: {
-    password: string
-    email: string
-  }) => {
-    try {
-      const { user } = await auth.signInWithEmailAndPassword(email, password)
-      if (user) {
-        updateUserState(loginUser())
-        history.push("/")
+const Login = () => {
+  const sendEmail = async (email: string) => {
+    if (/justiceandpeace.nl$/.test(email)) {
+      try {
+        auth.sendSignInLinkToEmail(email, {
+          url: "http://localhost:3000/confirmation",
+          handleCodeInApp: true,
+        })
+        window.localStorage.setItem("emailForSignIn", email)
+      } catch (error) {
+        console.log("Login -> error", error)
       }
-      console.log(user?.email)
-      console.log(user?.uid)
-      // generateUserDocument(user, { displayName })
-    } catch (error) {
-      // setError("Error Signing up with email and password")
+    } else {
+      message.error("Invalid email address")
     }
   }
-  // React.useEffect(() => {
-  //   const getUser = async () => {
-  //     try {
-  //       const { user } = await auth.signInWithEmailAndPassword(
-  //         "andras@test.com",
-  //         "123456"
-  //       )
-  //       console.log(user?.email)
-  //       console.log(user?.uid)
-  //       // generateUserDocument(user, { displayName })
-  //     } catch (error) {
-  //       console.log("App -> error", error)
-  //       // setError("Error Signing up with email and password")
-  //     }
-  //   }
-  //   getUser()
-  // }, [])
 
   return (
     <MainContainer>
       <Form
-        {...layout}
+        style={{
+          width: 400,
+        }}
         name="basic"
-        initialValues={{ remember: true }}
-        onFinish={(values) => getUser(values)}
-        // onFinishFailed={onFinishFailed}
+        onFinish={({ email }) => sendEmail(email)}
       >
-        <Form.Item label="Email" name="email">
-          <Input />
+        <Form.Item name="email">
+          <Input placeholder="Please enter an email" />
         </Form.Item>
-        <Form.Item
-          label="Password"
-          name="password"
-          // rules={[{ required: true, message: "Please input your password!" }]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item {...tailLayout}>
+        <Form.Item>
           <Space>
-            <Button type="primary" htmlType="submit">
-              Login
-            </Button>
             <Button
-              type="text"
-              onClick={() => {
-                history.push("/register")
+              style={{
+                width: 400,
               }}
+              type="primary"
+              htmlType="submit"
+              block
+              icon={<MailOutlined />}
             >
-              Register
+              Send confirmation email
             </Button>
           </Space>
         </Form.Item>
