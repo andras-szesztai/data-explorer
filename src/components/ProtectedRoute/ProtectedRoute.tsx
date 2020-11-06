@@ -9,9 +9,8 @@ interface Props {
 const ProtectedRoute = ({ component, path }: Props) => {
   const userState = React.useContext(UserStateContext)
   console.log("ProtectedRoute -> userState", userState)
-  const isAuthenticated = false
 
-  return isAuthenticated ? (
+  return userState.isAuthenticated ? (
     <Route path={path} component={component} exact={true} />
   ) : (
     <Redirect to={{ pathname: "/login" }} />

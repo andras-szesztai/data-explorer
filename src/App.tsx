@@ -5,12 +5,15 @@ import { Route, BrowserRouter, Switch } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"
 import Dashboard from "./components/Dashboard/Dashboard"
 import Login from "./components/Login/Login"
+import Register from "./components/Register/Register"
 
 import {
   initialUserState,
   UserActions,
   userReducer,
 } from "./reducers/userReducer"
+
+import { UserState } from "./types/user"
 
 import "./styles/App.less"
 
@@ -21,7 +24,7 @@ const MainContainer = styled.div`
   user-select: none;
 `
 
-export const UserStateContext = React.createContext({})
+export const UserStateContext = React.createContext({} as UserState)
 export const UserDispatchContext = React.createContext(
   {} as React.Dispatch<UserActions>
 )
@@ -38,6 +41,7 @@ const App = () => {
           <BrowserRouter>
             <Switch>
               <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
               <ProtectedRoute path="/" component={Dashboard} />
             </Switch>
           </BrowserRouter>

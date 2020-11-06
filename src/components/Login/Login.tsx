@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "styled-components"
-import { Form, Input, Button } from "antd"
-import { useHistory } from "react-router-dom";
+import { Form, Input, Button, Space } from "antd"
+import { useHistory, Link } from "react-router-dom"
 
 import { auth } from "../../firebase"
 
@@ -29,7 +29,7 @@ const Login = (props: any) => {
   const userState = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
 
-  let history = useHistory();
+  const history = useHistory()
 
   const getUser = async ({
     password,
@@ -42,13 +42,12 @@ const Login = (props: any) => {
       const { user } = await auth.signInWithEmailAndPassword(email, password)
       if (user) {
         updateUserState(loginUser())
-        history.push("/home")
+        history.push("/")
       }
       console.log(user?.email)
       console.log(user?.uid)
       // generateUserDocument(user, { displayName })
     } catch (error) {
-      console.log("App -> error", error)
       // setError("Error Signing up with email and password")
     }
   }
@@ -89,11 +88,20 @@ const Login = (props: any) => {
         >
           <Input.Password />
         </Form.Item>
-
         <Form.Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
-            Login
-          </Button>
+          <Space>
+            <Button type="primary" htmlType="submit">
+              Login
+            </Button>
+            <Button
+              type="text"
+              onClick={() => {
+                history.push("/register")
+              }}
+            >
+              Register
+            </Button>
+          </Space>
         </Form.Item>
       </Form>
     </MainContainer>
