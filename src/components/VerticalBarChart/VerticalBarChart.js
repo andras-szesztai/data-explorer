@@ -93,6 +93,7 @@ const VerticalBarChart = ({ data, question }) => {
     const yScale = scaleLinear()
       .domain([0, maxBy(yValues, "value")?.value || 1])
       .range([height - margin.bottom, margin.top])
+
     let combinedStackedData = []
     xScale.domain().forEach((val) => {
       const stackGen = stack().keys(CHART_DOMAINS[question.type][val])
@@ -113,13 +114,22 @@ const VerticalBarChart = ({ data, question }) => {
           value: d[0].data[d.key],
         })
       )
-    select(chartAreaRef.current)
+
+    const chartArea = select(chartAreaRef.current)
+
+    const t = chartArea
+      .transition()
+      .duration(DURATION_MILLISECOND.sm)
+      .ease(easeCubicInOut)
+
+    chartArea
       .selectAll(".rect-group")
       .data(combinedStackedData)
       .enter()
       .append("g")
       .attr("class", "rect-group")
-    select(chartAreaRef.current)
+
+    chartArea
       .selectAll(".rect-group")
       .selectAll(".label-rect")
       .data(
@@ -142,8 +152,7 @@ const VerticalBarChart = ({ data, question }) => {
         (update) =>
           update.call(addMouseOver).call((update) =>
             update
-              .transition()
-              .duration(DURATION_MILLISECOND.sm)
+              .transition(t)
               .attr("x", (d) => xScale(d[0].data.group))
               .attr("width", xScale.bandwidth())
               .attr("y", (d) => yScale(d[0][1] || 0))
@@ -151,7 +160,8 @@ const VerticalBarChart = ({ data, question }) => {
           ),
         (exit) => exit.remove()
       )
-    select(chartAreaRef.current)
+
+    chartArea
       .selectAll(".bar-text")
       .data(yValues, (d) => d.labelGroup + question.question)
       .join(
@@ -168,16 +178,15 @@ const VerticalBarChart = ({ data, question }) => {
         (update) =>
           update.call((update) =>
             update
-              .transition()
-              .duration(DURATION_MILLISECOND.sm)
-              .ease(easeCubicInOut)
+              .transition(t)
               .attr("x", (d) => xScale(d.labelGroup) + xScale.bandwidth() / 2)
               .attr("y", (d) => yScale(d.value || 0))
               .text((d) => numeral(d.value || 0).format("0.0%"))
           ),
         (exit) => exit.remove()
       )
-    select(chartAreaRef.current)
+
+    chartArea
       .selectAll(".axis-text")
       .data(xScale.domain(), (d) => d + question.question)
       .join(
@@ -193,9 +202,7 @@ const VerticalBarChart = ({ data, question }) => {
         (update) =>
           update.call((update) =>
             update
-              .transition()
-              .duration(DURATION_MILLISECOND.sm)
-              .ease(easeCubicInOut)
+              .transition(t)
               .attr("x", (d) => xScale(d) + xScale.bandwidth() / 2)
               .attr("y", height - 2.5)
               .text((d) => d)
