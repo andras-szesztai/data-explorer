@@ -17,7 +17,7 @@ const Login = () => {
     if (/justiceandpeace.nl$/.test(email)) {
       try {
         auth.sendSignInLinkToEmail(email, {
-          url: "http://localhost:3000/confirmation",
+          url: window.location.href.replace("login", "confirmation"),
           handleCodeInApp: true,
         })
         window.localStorage.setItem("emailForSignIn", email)
