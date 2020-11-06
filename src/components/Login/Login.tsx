@@ -1,10 +1,9 @@
 import React from "react"
 import styled from "styled-components"
 import { Form, Input, Button, Space, message } from "antd"
+import { MailOutlined } from "@ant-design/icons"
 
 import { auth } from "../../firebase"
-
-import { MailOutlined } from "@ant-design/icons"
 
 const MainContainer = styled.div`
   height: 100%;
@@ -22,8 +21,11 @@ const Login = () => {
           handleCodeInApp: true,
         })
         window.localStorage.setItem("emailForSignIn", email)
+        message.success(
+          "Email sent, please check out your inbox! You can close this tab now."
+        )
       } catch (error) {
-        console.log("Login -> error", error)
+        message.error(error.message)
       }
     } else {
       message.error("Invalid email address")

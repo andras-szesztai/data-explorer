@@ -5,7 +5,7 @@ import { Route, BrowserRouter, Switch } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"
 import Dashboard from "./components/Dashboard/Dashboard"
 import Login from "./components/Login/Login"
-import Register from "./components/Register/Register"
+import Confirmation from "./components/Confirmation/Confirmation"
 
 import {
   initialUserState,
@@ -16,7 +16,6 @@ import {
 import { UserState } from "./types/user"
 
 import "./styles/App.less"
-import Confirmation from "./components/Confirmation/Confirmation"
 
 const MainContainer = styled.div`
   width: 100vw;
@@ -42,7 +41,6 @@ const App = () => {
           <BrowserRouter>
             <Switch>
               <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
               <Route path="/confirmation" component={Confirmation} />
               <ProtectedRoute path="/" component={Dashboard} />
             </Switch>

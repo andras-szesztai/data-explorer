@@ -2,9 +2,12 @@ import { Spin } from "antd"
 import React from "react"
 import { useHistory } from "react-router-dom"
 import styled from "styled-components"
-import { loginUser } from "../../actions/userActions"
-import { UserDispatchContext, UserStateContext } from "../../App"
+
 import { auth } from "../../firebase"
+
+import { loginUser } from "../../actions/userActions"
+
+import { UserDispatchContext } from "../../App"
 
 const SpinnerContainer = styled.div`
   height: 100%;
@@ -28,14 +31,17 @@ function Confirmation() {
             .then(function (result) {
               window.localStorage.removeItem("emailForSignIn")
               if (result.user) {
-                updateUserState(loginUser())
+                updateUserState(loginUser(result.user.uid))
                 history.push("/")
               }
             })
             .catch(function (error) {
               console.error("Confirmation -> error", error)
+              history.push("/login")
             })
         }
+      } else {
+        history.push("/login")
       }
     }
   })
