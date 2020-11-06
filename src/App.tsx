@@ -17,6 +17,7 @@ import numeral from "numeral"
 
 import FilterCheckBoxGroup from "./components/FilterCheckBoxGroup/FilterCheckBoxGroup"
 import DataSetSelector from "./components/DataSetSelector/DataSetSelector"
+import ChartCard from "./components/ChartCard/ChartCard"
 
 import { addFilter } from "./actions/filtersActions"
 import { updateFilteredDataSet } from "./actions/dataSetActions"
@@ -28,9 +29,9 @@ import { useInitializeAvailableDataSets } from "./hooks"
 import { COLORS } from "./constants/colors"
 import { CHART_AREA_HEIGHT } from "./constants/dimensions"
 import { AvailableQuestion } from "./types/dataSets"
+import { auth } from "./firebase"
 
 import "./styles/App.less"
-import ChartCard from "./components/ChartCard/ChartCard"
 
 const MainContainer = styled.div`
   width: 100vw;
@@ -73,7 +74,6 @@ const App = () => {
     updateDataSetState
   )
 
-  // TODO: Hook
   React.useEffect(() => {
     if (prevFilterState && !isEqual(filterState, prevFilterState)) {
       updateFilteredDataSet(
@@ -84,6 +84,24 @@ const App = () => {
       )
     }
   }, [filterState, prevFilterState, dataSetState])
+
+  React.useEffect(() => {
+    const getUser = async () => {
+      try {
+        const { user } = await auth.signInWithEmailAndPassword(
+          "andras@test.com",
+          "123456"
+        )
+        console.log(user?.email)
+        console.log(user?.uid)
+        // generateUserDocument(user, { displayName })
+      } catch (error) {
+        console.log("App -> error", error)
+        // setError("Error Signing up with email and password")
+      }
+    }
+    getUser()
+  }, [])
 
   return (
     <MainContainer>
@@ -236,7 +254,12 @@ const App = () => {
                               placement="topLeft"
                               title="This question is actively filtering the dataset"
                             >
-                              <Badge count="Active"    style={{ backgroundColor: COLORS.secondaryOrange }} />
+                              <Badge
+                                count="Active"
+                                style={{
+                                  backgroundColor: COLORS.secondaryOrange,
+                                }}
+                              />
                             </Tooltip>
                           )}
                         </>
