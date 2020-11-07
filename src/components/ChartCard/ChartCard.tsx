@@ -43,8 +43,10 @@ const ChartCard = ({
     prevChart,
     filteredDataSet,
   })
-  console.log("filteredDataSetStatistics", filteredDataSetStatistics)
-  console.log("chart", chart.group)
+
+  const totalResp = filteredDataSetStatistics.find(
+    (d: DataSetStatistics) => d.label === chart.group
+  )?.value
 
   const isDisabled = !availableQuestions.length
   return (
@@ -101,15 +103,7 @@ const ChartCard = ({
       }
     >
       {!!chartData.length && (
-        <VerticalBarChart
-          data={chartData}
-          question={chart}
-          total={
-            filteredDataSetStatistics.find(
-              (d: DataSetStatistics) => d.label === chart.group
-            )?.value
-          }
-        />
+        <VerticalBarChart data={chartData} question={chart} total={totalResp} />
       )}
     </Card>
   )

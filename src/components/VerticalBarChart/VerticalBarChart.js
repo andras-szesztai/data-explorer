@@ -230,7 +230,7 @@ const VerticalBarChart = ({ data, question, total }) => {
         style={{
           position: "absolute",
           left: -8,
-          top: -8,
+          top: -10,
         }}
       >
         <Badge
@@ -243,7 +243,7 @@ const VerticalBarChart = ({ data, question, total }) => {
       {hovered && (
         <TooltipContainer
           ref={tooltipRef}
-          top={hovered.yPosition - tooltipHeight / 2}
+          top={hovered.yPosition - tooltipHeight / 2 - 5}
           left={hovered.xPosition - tooltipWidth - (16 + 10)}
           color={CHART_COLORS[question.type][hovered.label]}
         >
