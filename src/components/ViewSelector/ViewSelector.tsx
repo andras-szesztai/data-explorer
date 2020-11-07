@@ -2,6 +2,9 @@ import React from "react"
 import { Button, Card } from "antd"
 import styled from "styled-components"
 import { EyeFilled } from "@ant-design/icons"
+import { usePrevious } from "react-use"
+import isEqual from "lodash/isEqual"
+import isEmpty from "lodash/isEmpty"
 
 import { UserStateContext } from "../../App"
 
@@ -37,25 +40,34 @@ const ViewSelector = ({
   prevActiveDataSetName,
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
+  const prevActiveViewName = usePrevious(activeViewName)
 
   const [dataSetViews, setDataSetViews] = React.useState([] as string[])
   React.useEffect(() => {
-    if (activeDataSetName && activeDataSetName !== prevActiveDataSetName) {
+    if (
+      (activeDataSetName && activeDataSetName !== prevActiveDataSetName) ||
+      (activeViewName && activeViewName !== prevActiveViewName)
+    ) {
       const allViews = Object.values(currentUser[projectAccessor].savedViews)
       const dataSetFilteredViews = allViews.filter(
         (v) => v && v.dataSet === activeDataSetName
       )
+      console.log("dataSetFilteredViews", dataSetFilteredViews)
       const lastActiveSorted = dataSetFilteredViews.length
         ? dataSetFilteredViews
-            .sort(
-              (a: any, b: any) => b.lastActive.toDate() - a.lastActive.toDate()
+            .sort((a: any, b: any) =>
+              a.lastActive instanceof Date
+                ? b.lastActive - a.lastActive
+                : b.lastActive.toDate() - a.lastActive.toDate()
             )
             .map((v: SavedViewObject) => v.title)
         : []
       setDataSetViews(lastActiveSorted)
     }
+    if (prevActiveDataSetName && !activeDataSetName) {
+      setDataSetViews([])
+    }
   }, [activeDataSetName, prevActiveDataSetName, currentUser])
-  console.log("dataSetViews", dataSetViews)
 
   return (
     <Card
@@ -69,14 +81,18 @@ const ViewSelector = ({
     >
       <MainContainer>
         <ElementContainer>Your most recently active view:</ElementContainer>
-        <ElementContainer justify="flex-start">
+        <ElementContainer
+          justify={
+            activeViewName || dataSetViews.length > 1 ? "flex-start" : ""
+          }
+        >
           {activeViewName || dataSetViews.length > 1 ? (
             <Button
               icon={<EyeFilled />}
               // onClick={() => isNewView && setModalIsOpen(true)}
             >
               {activeViewName && dataSetViews.length > 1
-                ? dataSetViews[1]
+                ? dataSetViews.find((d) => d !== activeViewName)
                 : activeViewName || dataSetViews[0]}
             </Button>
           ) : !activeDataSetName ? (
