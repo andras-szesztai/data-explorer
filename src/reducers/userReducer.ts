@@ -17,8 +17,8 @@ import {
 import { CurrentUserObject, UserState } from "../types/user"
 
 export const initialUserState = {
-  isAuthenticated: true,
-  userId: "51uq0KXEQYNgkW1nDqBJC0KagHT251uq0KXEQYNgkW1nDqBJC0KagHT2",
+  isAuthenticated: false,
+  userId: "",
   currentUser: {} as CurrentUserObject,
 }
 
