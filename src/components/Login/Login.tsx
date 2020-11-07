@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { Form, Input, Button, Space, message } from "antd"
+import { Form, Input, Button, Space, message, Typography } from "antd"
 import { MailOutlined } from "@ant-design/icons"
 
 import { auth } from "../../firebase"
@@ -8,13 +8,14 @@ import { auth } from "../../firebase"
 const MainContainer = styled.div`
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 `
 
 const Login = () => {
   const sendEmail = async (email: string) => {
-    if (/justiceandpeace.nl$/.test(email)) {
+    if (/@justiceandpeace.nl$/.test(email)) {
       try {
         auth.sendSignInLinkToEmail(email, {
           url: window.location.href.replace("login", "confirmation"),
@@ -34,6 +35,9 @@ const Login = () => {
 
   return (
     <MainContainer>
+      <Typography.Title level={3} style={{ marginBottom: 24 }}>
+        Welcome to the Justice and Peace Data Explorer
+      </Typography.Title>
       <Form
         style={{
           width: 400,
@@ -42,7 +46,7 @@ const Login = () => {
         onFinish={({ email }) => sendEmail(email)}
       >
         <Form.Item name="email">
-          <Input placeholder="Please enter an email" />
+          <Input placeholder="Please enter your email to authenticate" />
         </Form.Item>
         <Form.Item>
           <Space>

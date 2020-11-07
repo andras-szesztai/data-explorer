@@ -1,26 +1,16 @@
 import React from "react"
-import {
-  Select,
-  Space,
-  Card,
-  Collapse,
-  Badge,
-  Tooltip,
-  Row,
-  Col,
-  Statistic,
-} from "antd"
+import { Select, Space, Card, Collapse, Badge, Tooltip, Row, Col } from "antd"
 import styled from "styled-components"
 import { useMeasure, usePrevious } from "react-use"
-import isEqual from "lodash/isEqual"
-import numeral from "numeral"
 
-import FilterCheckBoxGroup from "../../components/FilterCheckBoxGroup/FilterCheckBoxGroup"
-import DataSetSelector from "../../components/DataSetSelector/DataSetSelector"
-import ChartCard from "../../components/ChartCard/ChartCard"
+import FilterCheckBoxGroup from "../FilterCheckBoxGroup/FilterCheckBoxGroup"
+import DataSetSelector from "../DataSetSelector/DataSetSelector"
+import ChartCard from "../ChartCard/ChartCard"
+import ViewSelector from "../ViewSelector/ViewSelector"
+import SaveView from "../SaveView/SaveView"
+import StatisticsContainer from "../StatisticsContainer/StatisticsContainer"
 
 import { addFilter } from "../../actions/filtersActions"
-import { updateFilteredDataSet } from "../../actions/dataSetActions"
 import {
   dataSetReducer,
   initialDataSetState,
@@ -31,14 +21,16 @@ import {
 } from "../../reducers/filtersReducer"
 import { chartsReducer, initialChartsState } from "../../reducers/chartsReducer"
 
-import { useInitializeAvailableDataSets } from "../../hooks"
+import {
+  useInitializeAvailableDataSets,
+  useUpdateFilteredDataSet,
+} from "../../hooks"
 import { COLORS } from "../../constants/colors"
 import { CHART_AREA_HEIGHT } from "../../constants/dimensions"
 import { AvailableQuestion } from "../../types/dataSets"
 
 import "../../styles/App.less"
-import SaveView from "../SaveView/SaveView"
-import ViewSelector from "../ViewSelector/ViewSelector"
+import useEmptyActiveViewName from "../../hooks/useEmptyActiveViewName/useEmptyActiveViewName"
 
 const ChartsMainContainer = styled.div`
   width: 100%;
@@ -50,7 +42,6 @@ const ChartsMainContainer = styled.div`
   grid-row-gap: 8px;
 `
 
-// TODO: chop it up
 const Dashboard = () => {
   const [dataSetState, updateDataSetState] = React.useReducer(
     dataSetReducer,
@@ -67,6 +58,8 @@ const Dashboard = () => {
     initialChartsState
   )
   const prevChartState = usePrevious(chartState)
+  const [activeViewName, setActiveViewName] = React.useState("")
+  const prevActiveViewName = usePrevious(activeViewName)
 
   const [questionSearchRef, { height: questionSearchRefHeight }] = useMeasure<
     HTMLDivElement
@@ -76,40 +69,21 @@ const Dashboard = () => {
     dataSetState.availableDataSets,
     updateDataSetState
   )
-
-  const [activeViewName, setActiveViewName] = React.useState("")
-  const prevActiveViewName = usePrevious(activeViewName)
-
-  React.useEffect(() => {
-    if (prevFilterState && !isEqual(filterState, prevFilterState)) {
-      updateFilteredDataSet(
-        updateDataSetState,
-        dataSetState.activeDataSet,
-        filterState.filterQuestions,
-        dataSetState.availableGroups
-      )
-      if (activeViewName && activeViewName === prevActiveViewName) {
-        setActiveViewName("")
-      }
-    }
-  }, [
-    filterState,
+  useUpdateFilteredDataSet({
     prevFilterState,
-    dataSetState,
+    updateDataSetState,
+    filterState,
+    activeDataSet: dataSetState.activeDataSet,
+    filterQuestions: filterState.filterQuestions,
+    availableGroups: dataSetState.availableGroups,
+  })
+  useEmptyActiveViewName({
     activeViewName,
+    setActiveViewName,
     prevActiveViewName,
-  ])
-
-  React.useEffect(() => {
-    if (
-      activeViewName &&
-      activeViewName === prevActiveViewName &&
-      prevChartState &&
-      !isEqual(chartState, prevChartState)
-    ) {
-      setActiveViewName("")
-    }
-  }, [chartState, prevChartState, activeViewName, prevActiveViewName])
+    prevChartState,
+    chartState,
+  })
 
   return (
     <>
@@ -123,49 +97,10 @@ const Dashboard = () => {
           />
         </Col>
         <Col span={18}>
-          <Card
-            style={{
-              height: "100%",
-              paddingTop: 12,
-            }}
-          >
-            <Row gutter={8}>
-              <Col span={1} />
-              {!!dataSetState.activeDataSetStatistics.length &&
-                dataSetState.activeDataSetStatistics.map(
-                  (type: { label: string; value: number }, i: number) => {
-                    const filtered = dataSetState.filteredDataSetStatistics[i]
-                    const percentage = filtered.value / type.value
-                    return (
-                      <React.Fragment key={type.label}>
-                        <Col span={5}>
-                          <Statistic
-                            title={`${type.label} Total`}
-                            value={type.value}
-                          />
-                        </Col>
-                        <Col span={5}>
-                          <Statistic
-                            title="Filtered"
-                            value={`${filtered.value} (${numeral(
-                              percentage
-                            ).format(
-                              percentage === 1
-                                ? "0%"
-                                : percentage < 0.1
-                                ? "0.00%"
-                                : "0.0%"
-                            )})`}
-                          />
-                        </Col>
-                        {i === 0 && <Col span={2} />}
-                      </React.Fragment>
-                    )
-                  }
-                )}
-              <Col span={1} />
-            </Row>
-          </Card>
+          <StatisticsContainer
+            activeDataSetStatistics={dataSetState.activeDataSetStatistics}
+            filteredDataSetStatistics={dataSetState.filteredDataSetStatistics}
+          />
         </Col>
       </Row>
       <Row gutter={[16, 16]}>
@@ -202,7 +137,6 @@ const Dashboard = () => {
                   value={filterState.filterQuestions.length ? "" : undefined}
                 >
                   {dataSetState.availableGroups.map((group: string) => {
-                    // TODO: make component
                     return (
                       <Select.OptGroup label={group} key={`${group}-chart-q`}>
                         {dataSetState.availableQuestions
