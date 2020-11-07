@@ -49,7 +49,6 @@ const ViewSelector = ({
   prevActiveViewName,
   updateChartState,
 }: Props) => {
-  console.log("activeViewName", activeViewName)
   const { currentUser } = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
 

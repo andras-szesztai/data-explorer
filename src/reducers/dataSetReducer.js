@@ -1,6 +1,5 @@
 import { INITIALIZE_AVAILABLE_DATASETS, UPDATE_ACTIVE_DATASET, UPDATE_FILTERED_DATASET } from '../actions/dataSetActions'
 
-// TODO: type it
 export const initialDataSetState = {
   activeDataSetName: "",
   availableDataSets: [],

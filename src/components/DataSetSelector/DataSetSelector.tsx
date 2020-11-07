@@ -1,10 +1,18 @@
 import React from "react"
-import { Card, Select } from "antd"
+import { Button, Card, Select, Tooltip } from "antd"
+import styled from "styled-components"
+import { FileExcelFilled } from "@ant-design/icons"
 
 import { FilterActions } from "../../reducers/filtersReducer"
 import { ChartActions } from "../../reducers/chartsReducer"
 
 import { useFetchActiveDataSet } from "../../hooks"
+import { exportToExcel } from "../../utils/dataHelpers"
+
+const TitleContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
 
 interface Props {
   dataSetState: any
@@ -17,7 +25,7 @@ const DataSetSelector = ({
   dataSetState,
   updateDataSetState,
   updateFilterState,
-  updateChartState
+  updateChartState,
 }: Props) => {
   const setActiveDataSetName = useFetchActiveDataSet(
     updateDataSetState,
@@ -25,9 +33,56 @@ const DataSetSelector = ({
     updateChartState
   )
 
+  const currentExcel = dataSetState.activeDataSet
+  const filteredCurrentExcel = dataSetState.filteredDataSet
+
   return (
     <Card
-      title="Data Explorer"
+      title={
+        <TitleContainer>
+          <span>Data Explorer</span>
+          <div>
+            <Tooltip
+              placement="bottomLeft"
+              title="Download unfiltered dataset"
+              arrowPointAtCenter
+            >
+              <Button
+                onClick={() => {
+                  exportToExcel(currentExcel, dataSetState.activeDataSetName)
+                }}
+                disabled={!currentExcel.length}
+                type="primary"
+                size="small"
+                icon={<FileExcelFilled />}
+                style={{
+                  marginRight: 8,
+                }}
+              />
+            </Tooltip>
+            <Tooltip
+              placement="bottomLeft"
+              title="Download filtered dataset"
+              arrowPointAtCenter
+            >
+              <Button
+                onClick={() => {
+                  exportToExcel(
+                    filteredCurrentExcel,
+                    dataSetState.activeDataSetName
+                  )
+                }}
+                disabled={
+                  !filteredCurrentExcel.length ||
+                  currentExcel.length === filteredCurrentExcel.length
+                }
+                size="small"
+                icon={<FileExcelFilled />}
+              />
+            </Tooltip>
+          </div>
+        </TitleContainer>
+      }
       style={{
         height: "100%",
       }}
