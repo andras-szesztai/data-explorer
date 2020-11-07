@@ -16,6 +16,7 @@ interface Props {
   filterState: FilterQuestionsState
   prevFilterState?: FilterQuestionsState
   setActiveViewName: React.Dispatch<React.SetStateAction<string>>
+  activeViewName: string
 }
 
 // Can be prop later
@@ -28,7 +29,8 @@ const SaveView = ({
   prevChartState,
   filterState,
   prevFilterState,
-  setActiveViewName
+  setActiveViewName,
+  activeViewName,
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
@@ -36,6 +38,7 @@ const SaveView = ({
   React.useEffect(() => {
     if (
       !isNewView &&
+      !activeViewName &&
       prevDataSetState &&
       dataSetState.activeDataSetName === prevDataSetState.activeDataSetName &&
       (!!Object.values(chartState).find((d) => !isEmpty(d)) ||
@@ -51,7 +54,8 @@ const SaveView = ({
         dataSetState.activeDataSetName !==
           prevDataSetState.activeDataSetName) ||
         (!Object.values(chartState).find((d) => !isEmpty(d)) &&
-          !filterState.filterQuestions.length))
+          !filterState.filterQuestions.length) ||
+        activeViewName)
     ) {
       setIsNewView(false)
     }
@@ -63,6 +67,7 @@ const SaveView = ({
     isNewView,
     dataSetState,
     prevDataSetState,
+    activeViewName
   ])
 
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
@@ -80,7 +85,7 @@ const SaveView = ({
         charts: JSON.stringify(chartState),
         viewId: makeViewId(title),
         dataSet: dataSetState.activeDataSetName,
-        title
+        title,
       })
     )
     setActiveViewName(title)

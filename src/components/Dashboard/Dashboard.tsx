@@ -77,6 +77,9 @@ const Dashboard = () => {
     updateDataSetState
   )
 
+  const [activeViewName, setActiveViewName] = React.useState("")
+  const prevActiveViewName = usePrevious(activeViewName)
+
   React.useEffect(() => {
     if (prevFilterState && !isEqual(filterState, prevFilterState)) {
       updateFilteredDataSet(
@@ -85,10 +88,28 @@ const Dashboard = () => {
         filterState.filterQuestions,
         dataSetState.availableGroups
       )
+      if (activeViewName && activeViewName === prevActiveViewName) {
+        setActiveViewName("")
+      }
     }
-  }, [filterState, prevFilterState, dataSetState])
+  }, [
+    filterState,
+    prevFilterState,
+    dataSetState,
+    activeViewName,
+    prevActiveViewName,
+  ])
 
-  const [activeViewName, setActiveViewName] = React.useState("")
+  React.useEffect(() => {
+    if (
+      activeViewName &&
+      activeViewName === prevActiveViewName &&
+      prevChartState &&
+      !isEqual(chartState, prevChartState)
+    ) {
+      setActiveViewName("")
+    }
+  }, [chartState, prevChartState, activeViewName, prevActiveViewName])
 
   return (
     <>
@@ -299,14 +320,17 @@ const Dashboard = () => {
             filterState={filterState}
             prevFilterState={prevFilterState}
             setActiveViewName={setActiveViewName}
+            activeViewName={activeViewName}
           />
         </Col>
         <Col span={18}>
           <ViewSelector
             setActiveViewName={setActiveViewName}
             activeViewName={activeViewName}
+            prevActiveViewName={prevActiveViewName}
             activeDataSetName={dataSetState.activeDataSetName}
             prevActiveDataSetName={prevDataSetState?.activeDataSetName}
+            updateFilterState={updateFilterState}
           />
         </Col>
       </Row>

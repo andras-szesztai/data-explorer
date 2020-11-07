@@ -2,11 +2,10 @@ import React from "react"
 import { Button, Card } from "antd"
 import styled from "styled-components"
 import { EyeFilled } from "@ant-design/icons"
-import { usePrevious } from "react-use"
-import isEqual from "lodash/isEqual"
-import isEmpty from "lodash/isEmpty"
 
 import { UserStateContext } from "../../App"
+import { updateAllFilters } from "../../actions/filtersActions"
+import { FilterActions } from "../../reducers/filtersReducer"
 
 import { SavedViewObject } from "../../types/user"
 
@@ -27,8 +26,10 @@ const ElementContainer = styled.div`
 interface Props {
   setActiveViewName: React.Dispatch<React.SetStateAction<string>>
   activeViewName: string
+  prevActiveViewName?: string
   activeDataSetName: string
   prevActiveDataSetName?: string
+  updateFilterState: React.Dispatch<FilterActions>
 }
 
 const projectAccessor = "samenHier"
@@ -38,9 +39,10 @@ const ViewSelector = ({
   activeViewName,
   activeDataSetName,
   prevActiveDataSetName,
+  updateFilterState,
+  prevActiveViewName
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
-  const prevActiveViewName = usePrevious(activeViewName)
 
   const [dataSetViews, setDataSetViews] = React.useState([] as string[])
   React.useEffect(() => {
@@ -52,7 +54,6 @@ const ViewSelector = ({
       const dataSetFilteredViews = allViews.filter(
         (v) => v && v.dataSet === activeDataSetName
       )
-      console.log("dataSetFilteredViews", dataSetFilteredViews)
       const lastActiveSorted = dataSetFilteredViews.length
         ? dataSetFilteredViews
             .sort((a: any, b: any) =>
@@ -67,8 +68,20 @@ const ViewSelector = ({
     if (prevActiveDataSetName && !activeDataSetName) {
       setDataSetViews([])
     }
-  }, [activeDataSetName, prevActiveDataSetName, currentUser])
+  }, [
+    activeDataSetName,
+    prevActiveDataSetName,
+    currentUser,
+    activeViewName,
+    prevActiveViewName,
+  ])
 
+  const getQuickSelectorValue = () =>
+    activeViewName && dataSetViews.length > 1
+      ? dataSetViews.find((d) => d !== activeViewName)
+      : activeViewName || dataSetViews[0]
+  console.log("activeViewName", activeViewName)
+  console.log("getQuickSelectorValue", getQuickSelectorValue())
   return (
     <Card
       style={{
@@ -89,11 +102,21 @@ const ViewSelector = ({
           {activeViewName || dataSetViews.length > 1 ? (
             <Button
               icon={<EyeFilled />}
-              // onClick={() => isNewView && setModalIsOpen(true)}
+              onClick={() => {
+                const value = getQuickSelectorValue()
+                if (value) {
+                  const view =
+                    currentUser[projectAccessor].savedViews[
+                      `${activeDataSetName} - ${value}`
+                    ]
+                  const viewFilters = JSON.parse(view.filters)
+                  // update current user obj
+                  updateFilterState(updateAllFilters(viewFilters))
+                  setActiveViewName(value)
+                }
+              }}
             >
-              {activeViewName && dataSetViews.length > 1
-                ? dataSetViews.find((d) => d !== activeViewName)
-                : activeViewName || dataSetViews[0]}
+              {getQuickSelectorValue()}
             </Button>
           ) : !activeDataSetName ? (
             "Select a dataset or saved view first"
@@ -106,6 +129,7 @@ const ViewSelector = ({
             type="primary"
             block
             icon={<EyeFilled />}
+            disabled={!activeDataSetName}
             // onClick={() => isNewView && setModalIsOpen(true)}
           >
             Show all saved views
