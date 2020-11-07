@@ -4,6 +4,7 @@ export const LOGIN_USER = "LOGIN_USER"
 export const INITIALIZE_CURRENT_USER = "INITIALIZE_CURRENT_USER"
 export const ADD_NEW_VIEW = "ADD_NEW_VIEW"
 export const UPDATE_VIEW_LAST_ACTIVE = "UPDATE_VIEW_LAST_ACTIVE"
+export const DELETE_SAVED_VIEW = "DELETE_SAVED_VIEW"
 
 export const loginUser = (id: string) => {
   return { type: LOGIN_USER, payload: id } as const
@@ -34,10 +35,21 @@ export const addNewView = ({
   } as const
 }
 
-export const updateViewLastActive = (viewId: string, projectAccessor: string) => {
+export const deleteView = (viewId: string, projectAccessor: string) => {
+  return {
+    type: DELETE_SAVED_VIEW,
+    viewId,
+    projectAccessor,
+  } as const
+}
+
+export const updateViewLastActive = (
+  viewId: string,
+  projectAccessor: string
+) => {
   return {
     type: UPDATE_VIEW_LAST_ACTIVE,
     viewId,
-    projectAccessor
+    projectAccessor,
   } as const
 }

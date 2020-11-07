@@ -3,6 +3,9 @@ import { Button, Card } from "antd"
 import styled from "styled-components"
 import { EyeFilled } from "@ant-design/icons"
 
+import ViewSelectorModal from "../ViewSelectorModal/ViewSelectorModal"
+
+
 import { UserDispatchContext, UserStateContext } from "../../App"
 import { updateAllFilters } from "../../actions/filtersActions"
 import { updateViewLastActive } from "../../actions/userActions"
@@ -11,7 +14,6 @@ import { FilterActions } from "../../reducers/filtersReducer"
 import { ChartActions } from "../../reducers/chartsReducer"
 
 import { SavedViewObject } from "../../types/user"
-import ViewSelectorModal from "../ViewSelectorModal/ViewSelectorModal"
 
 const MainContainer = styled.div`
   height: 100%;
@@ -52,10 +54,14 @@ const ViewSelector = ({
   const updateUserState = React.useContext(UserDispatchContext)
 
   const [dataSetViews, setDataSetViews] = React.useState([] as string[])
+  const [viewListUpdateShouldRun, setViewListUpdateShouldRun] = React.useState(
+    false
+  )
   React.useEffect(() => {
     if (
       (activeDataSetName && activeDataSetName !== prevActiveDataSetName) ||
-      (activeViewName && activeViewName !== prevActiveViewName)
+      (activeViewName && activeViewName !== prevActiveViewName) ||
+      viewListUpdateShouldRun
     ) {
       const allViews = Object.values(currentUser[projectAccessor].savedViews)
       const dataSetFilteredViews = allViews.filter(
@@ -77,6 +83,7 @@ const ViewSelector = ({
             .map((v: SavedViewObject) => v.title)
         : []
       setDataSetViews(lastActiveSorted)
+      viewListUpdateShouldRun && setViewListUpdateShouldRun(false)
     }
     if (prevActiveDataSetName && !activeDataSetName) {
       setDataSetViews([])
@@ -87,6 +94,7 @@ const ViewSelector = ({
     currentUser,
     activeViewName,
     prevActiveViewName,
+    viewListUpdateShouldRun,
   ])
 
   const getQuickSelectorValue = () =>
@@ -161,8 +169,13 @@ const ViewSelector = ({
         <ViewSelectorModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
-          dataSetViews={dataSetViews.filter((d) => d !== activeViewName)}
+          dataSetViews={dataSetViews}
           updateSelectedView={updateSelectedView}
+          activeDataSetName={activeDataSetName}
+          projectAccessor={projectAccessor}
+          activeViewName={activeViewName}
+          setActiveViewName={setActiveViewName}
+          setViewListUpdateShouldRun={setViewListUpdateShouldRun}
         />
       </MainContainer>
     </Card>

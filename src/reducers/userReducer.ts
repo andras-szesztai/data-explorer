@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid"
+import { omit } from "lodash"
 
 import {
   addCurrentUser,
@@ -9,6 +10,8 @@ import {
   ADD_NEW_VIEW,
   updateViewLastActive,
   UPDATE_VIEW_LAST_ACTIVE,
+  deleteView,
+  DELETE_SAVED_VIEW,
 } from "../actions/userActions"
 
 import { CurrentUserObject, UserState } from "../types/user"
@@ -24,6 +27,7 @@ export type UserActions = ReturnType<
   | typeof addCurrentUser
   | typeof addNewView
   | typeof updateViewLastActive
+  | typeof deleteView
 >
 
 export const userReducer = (state: UserState, action: UserActions) => {
@@ -61,6 +65,23 @@ export const userReducer = (state: UserState, action: UserActions) => {
                   title: action.payload.title,
                 },
               },
+            },
+          },
+        }
+      } else {
+        return state
+      }
+    case DELETE_SAVED_VIEW:
+      currProject = state.currentUser[action.projectAccessor]
+      if (typeof currProject !== "string") {
+        const newViews = omit(currProject.savedViews, action.viewId)
+        return {
+          ...state,
+          currentUser: {
+            ...state.currentUser,
+            [action.projectAccessor]: {
+              ...currProject,
+              savedViews: newViews,
             },
           },
         }
