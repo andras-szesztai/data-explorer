@@ -1,27 +1,56 @@
 import React from "react"
-import { Modal } from "antd"
+import { Modal, Select } from "antd"
 
 interface Props {
   isModalOpen: boolean
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  dataSetViews: string[]
+  updateSelectedView: (value?: string) => void
 }
 
-const ViewSelectorModal = ({ isModalOpen, setIsModalOpen }: Props) => {
+const ViewSelectorModal = ({
+  isModalOpen,
+  setIsModalOpen,
+  dataSetViews,
+  updateSelectedView,
+}: Props) => {
+  const [selectedView, setSelectedView] = React.useState("")
   return (
     <Modal
-      title="Select a saved view from your list:"
+      title="Your saved views:"
       centered
       visible={isModalOpen}
-      okText="Select view"
-      okButtonProps={{ disabled: false }}
+      okText={
+        selectedView
+          ? `Populate dashboard with ${selectedView} view`
+          : "Select a saved view"
+      }
+      okButtonProps={{ disabled: !selectedView }}
       onOk={() => {
-        console.log("selecting")
+        updateSelectedView(selectedView)
+        setIsModalOpen(false)
       }}
       onCancel={() => {
         setIsModalOpen(false)
       }}
     >
-      Hello
+      <Select
+        style={{
+          width: "100%",
+        }}
+        onChange={(value: string) => setSelectedView(value)}
+        showSearch
+        placeholder="Select a view"
+        disabled={!dataSetViews.length}
+      >
+        {dataSetViews.map((view) => {
+          return (
+            <Select.Option key={view} value={view}>
+              {view}
+            </Select.Option>
+          )
+        })}
+      </Select>
     </Modal>
   )
 }

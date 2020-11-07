@@ -46,7 +46,7 @@ const ViewSelector = ({
   prevActiveDataSetName,
   updateFilterState,
   prevActiveViewName,
-  updateChartState
+  updateChartState,
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
@@ -96,6 +96,23 @@ const ViewSelector = ({
 
   const [isModalOpen, setIsModalOpen] = React.useState(false)
 
+  const updateSelectedView = (value?: string) => {
+    if (value) {
+      const view =
+        currentUser[projectAccessor].savedViews[
+          `${activeDataSetName} - ${value}`
+        ]
+      const viewFilters = JSON.parse(view.filters)
+      const viewCharts = JSON.parse(view.charts)
+      updateFilterState(updateAllFilters(viewFilters))
+      updateChartState(updateAllCharts(viewCharts))
+      setActiveViewName(value)
+      updateUserState(
+        updateViewLastActive(`${activeDataSetName} - ${value}`, projectAccessor)
+      )
+    }
+  }
+
   return (
     <Card
       style={{
@@ -107,7 +124,9 @@ const ViewSelector = ({
       }}
     >
       <MainContainer>
-        <ElementContainer>Your most recently active view:</ElementContainer>
+        <ElementContainer>
+          Your most recently active saved view:
+        </ElementContainer>
         <ElementContainer
           justify={
             activeViewName || dataSetViews.length > 1 ? "flex-start" : ""
@@ -117,24 +136,7 @@ const ViewSelector = ({
             <Button
               icon={<EyeFilled />}
               onClick={() => {
-                const value = getQuickSelectorValue()
-                if (value) {
-                  const view =
-                    currentUser[projectAccessor].savedViews[
-                      `${activeDataSetName} - ${value}`
-                    ]
-                  const viewFilters = JSON.parse(view.filters)
-                  const viewCharts = JSON.parse(view.charts)
-                  updateFilterState(updateAllFilters(viewFilters))
-                  updateChartState(updateAllCharts(viewCharts))
-                  setActiveViewName(value)
-                  updateUserState(
-                    updateViewLastActive(
-                      `${activeDataSetName} - ${value}`,
-                      projectAccessor
-                    )
-                  )
-                }
+                updateSelectedView(getQuickSelectorValue())
               }}
             >
               {getQuickSelectorValue()}
@@ -159,6 +161,8 @@ const ViewSelector = ({
         <ViewSelectorModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
+          dataSetViews={dataSetViews.filter((d) => d !== activeViewName)}
+          updateSelectedView={updateSelectedView}
         />
       </MainContainer>
     </Card>
