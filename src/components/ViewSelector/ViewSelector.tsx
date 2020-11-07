@@ -5,7 +5,6 @@ import { EyeFilled } from "@ant-design/icons"
 
 import ViewSelectorModal from "../ViewSelectorModal/ViewSelectorModal"
 
-
 import { UserDispatchContext, UserStateContext } from "../../App"
 import { updateAllFilters } from "../../actions/filtersActions"
 import { updateViewLastActive } from "../../actions/userActions"
@@ -50,6 +49,7 @@ const ViewSelector = ({
   prevActiveViewName,
   updateChartState,
 }: Props) => {
+  console.log("activeViewName", activeViewName)
   const { currentUser } = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
 
@@ -98,9 +98,9 @@ const ViewSelector = ({
   ])
 
   const getQuickSelectorValue = () =>
-    activeViewName && dataSetViews.length > 1
+    dataSetViews.length > 1
       ? dataSetViews.find((d) => d !== activeViewName)
-      : activeViewName || dataSetViews[0]
+      : dataSetViews[0]
 
   const [isModalOpen, setIsModalOpen] = React.useState(false)
 
@@ -137,10 +137,10 @@ const ViewSelector = ({
         </ElementContainer>
         <ElementContainer
           justify={
-            activeViewName || dataSetViews.length > 1 ? "flex-start" : ""
+            !!dataSetViews.length ? "flex-start" : ""
           }
         >
-          {activeViewName || dataSetViews.length > 1 ? (
+          {!!dataSetViews.length ? (
             <Button
               icon={<EyeFilled />}
               onClick={() => {
