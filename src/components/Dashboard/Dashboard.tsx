@@ -9,10 +9,13 @@ import {
   Row,
   Col,
   Statistic,
+  Button,
 } from "antd"
+import { SaveFilled } from "@ant-design/icons"
 import styled from "styled-components"
 import { useMeasure, usePrevious } from "react-use"
 import isEqual from "lodash/isEqual"
+import isEmpty from "lodash/isEmpty"
 import numeral from "numeral"
 
 import FilterCheckBoxGroup from "../../components/FilterCheckBoxGroup/FilterCheckBoxGroup"
@@ -54,6 +57,7 @@ const Dashboard = () => {
     dataSetReducer,
     initialDataSetState
   )
+  const prevDataSetState = usePrevious(dataSetState)
   const [filterState, updateFilterState] = React.useReducer(
     filtersReducer,
     initialFiltersState
@@ -63,6 +67,40 @@ const Dashboard = () => {
     chartsReducer,
     initialChartsState
   )
+  const prevChartState = usePrevious(chartState)
+
+  const [isNewView, setIsNewView] = React.useState(false)
+  React.useEffect(() => {
+    if (
+      !isNewView &&
+      prevDataSetState &&
+      dataSetState.activeDataSetName === prevDataSetState.activeDataSetName &&
+      (!!Object.values(chartState).find((d) => !isEmpty(d)) ||
+        filterState.filterQuestions.length) &&
+      ((prevChartState && !isEqual(chartState, prevChartState)) ||
+        (prevFilterState && !isEqual(filterState, prevFilterState)))
+    ) {
+      setIsNewView(true)
+    }
+    if (
+      isNewView &&
+      ((prevDataSetState &&
+        dataSetState.activeDataSetName !==
+          prevDataSetState.activeDataSetName) ||
+        (!Object.values(chartState).find((d) => !isEmpty(d)) &&
+          !filterState.filterQuestions.length))
+    ) {
+      setIsNewView(false)
+    }
+  }, [
+    chartState,
+    prevChartState,
+    filterState,
+    prevFilterState,
+    isNewView,
+    dataSetState,
+    prevDataSetState,
+  ])
 
   const [questionSearchRef, { height: questionSearchRefHeight }] = useMeasure<
     HTMLDivElement
@@ -86,7 +124,7 @@ const Dashboard = () => {
   return (
     <>
       <Row gutter={[16, 16]}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <DataSetSelector
             dataSetState={dataSetState}
             updateDataSetState={updateDataSetState}
@@ -94,7 +132,7 @@ const Dashboard = () => {
             updateChartState={updateChartState}
           />
         </Col>
-        <Col className="gutter-row" span={18}>
+        <Col span={18}>
           <Card
             style={{
               height: "100%",
@@ -141,7 +179,7 @@ const Dashboard = () => {
         </Col>
       </Row>
       <Row gutter={[16, 16]}>
-        <Col className="gutter-row" span={6}>
+        <Col span={6}>
           <Card
             style={{
               height: CHART_AREA_HEIGHT,
@@ -256,7 +294,7 @@ const Dashboard = () => {
             )}
           </Card>
         </Col>
-        <Col className="gutter-row" span={18}>
+        <Col span={18}>
           <Card
             style={{
               height: "100%",
@@ -280,6 +318,18 @@ const Dashboard = () => {
               })}
             </ChartsMainContainer>
           </Card>
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col span={6}>
+          <Button
+            block
+            type="primary"
+            icon={<SaveFilled />}
+            disabled={!isNewView}
+          >
+            Save current view
+          </Button>
         </Col>
       </Row>
     </>

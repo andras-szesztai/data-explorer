@@ -2,6 +2,7 @@ import { INITIALIZE_AVAILABLE_DATASETS, UPDATE_ACTIVE_DATASET, UPDATE_FILTERED_D
 
 // TODO: type it
 export const initialDataSetState = {
+  activeDataSetName: "",
   availableDataSets: [],
   activeDataSet: [],
   activeDataSetStatistics: [],
@@ -19,6 +20,7 @@ export const dataSetReducer = (state, action) => {
     case UPDATE_ACTIVE_DATASET:
       return {
         ...state,
+        activeDataSetName: payload.activeDataSetName,
         activeDataSet: payload.newDataSet,
         activeDataSetStatistics: payload.statistics,
         filteredDataSet: payload.newDataSet,
