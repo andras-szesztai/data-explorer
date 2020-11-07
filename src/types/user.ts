@@ -5,6 +5,7 @@ export interface UserState {
 }
 
 export interface CurrentUserObject {
+  [key: string]: string | SamenHierObject
   id: string
   samenHier: SamenHierObject
 }
@@ -16,4 +17,6 @@ export interface SamenHierObject {
 export interface SavedViewObject {
   id: string
   date: Date
+  filters: string
+  charts: string
 }

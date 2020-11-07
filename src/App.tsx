@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import { Route, BrowserRouter, Switch } from "react-router-dom"
+import { useUnmount } from "react-use"
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"
 import Dashboard from "./components/Dashboard/Dashboard"
@@ -35,6 +36,8 @@ const App = () => {
     userReducer,
     initialUserState
   )
+
+  // useUnmount
 
   useInitializeUser({ userState, updateUserState })
 

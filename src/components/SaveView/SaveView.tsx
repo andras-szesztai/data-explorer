@@ -7,6 +7,7 @@ import isEmpty from "lodash/isEmpty"
 import { UserDispatchContext, UserStateContext } from "../../App"
 import { FilterQuestionsState } from "../../types/filters"
 import { AvailableQuestion } from "../../types/dataSets"
+import { addNewView } from "../../actions/userActions"
 
 interface Props {
   dataSetState: any
@@ -16,6 +17,9 @@ interface Props {
   filterState: FilterQuestionsState
   prevFilterState?: FilterQuestionsState
 }
+
+// Can be prop later
+const projectAccessor = "samenHier"
 
 const SaveView = ({
   dataSetState,
@@ -27,7 +31,6 @@ const SaveView = ({
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
-
   const [isNewView, setIsNewView] = React.useState(false)
   React.useEffect(() => {
     if (
@@ -65,6 +68,24 @@ const SaveView = ({
   const [title, setTitle] = React.useState("")
   const [titleExist, setTitleExist] = React.useState(false)
 
+  const makeViewId = (titleString: string) =>
+    `${dataSetState.activeDataSetName} - ${titleString}`
+
+  const saveNewTitle = () => {
+    updateUserState(
+      addNewView({
+        projectAccessor,
+        filters: JSON.stringify(filterState.filterQuestions),
+        charts: JSON.stringify(chartState),
+        viewId: makeViewId(title),
+      })
+    )
+    setModalIsOpen(false)
+    titleExist && setTitleExist(false)
+    setTitle("")
+    setIsNewView(false)
+  }
+
   return (
     <>
       <Button
@@ -82,10 +103,12 @@ const SaveView = ({
         visible={modalIsOpen}
         okText="Save"
         okButtonProps={{ disabled: !title }}
-        onOk={() => {
+        onOk={saveNewTitle}
+        onCancel={() => {
           setModalIsOpen(false)
+          setTitle("")
+          titleExist && setTitleExist(false)
         }}
-        onCancel={() => setModalIsOpen(false)}
       >
         <Form.Item
           hasFeedback={titleExist}
@@ -101,14 +124,14 @@ const SaveView = ({
             onChange={(e) => {
               setTitle(e.target.value)
               const isExist =
-                currentUser.samenHier.savedViews[
-                  `${dataSetState.activeDataSetName} - ${e.target.value}`
+                currentUser[projectAccessor].savedViews[
+                  makeViewId(e.target.value)
                 ]
               if (isExist) {
                 setTitleExist(true)
               }
             }}
-            onPressEnter={() => console.log(title)}
+            onPressEnter={saveNewTitle}
           />
         </Form.Item>
       </Modal>
