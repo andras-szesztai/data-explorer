@@ -9,13 +9,10 @@ import {
   Row,
   Col,
   Statistic,
-  Button,
 } from "antd"
-import { SaveFilled } from "@ant-design/icons"
 import styled from "styled-components"
 import { useMeasure, usePrevious } from "react-use"
 import isEqual from "lodash/isEqual"
-import isEmpty from "lodash/isEmpty"
 import numeral from "numeral"
 
 import FilterCheckBoxGroup from "../../components/FilterCheckBoxGroup/FilterCheckBoxGroup"
@@ -40,6 +37,7 @@ import { CHART_AREA_HEIGHT } from "../../constants/dimensions"
 import { AvailableQuestion } from "../../types/dataSets"
 
 import "../../styles/App.less"
+import SaveView from "../SaveView/SaveView"
 
 const ChartsMainContainer = styled.div`
   width: 100%;
@@ -68,39 +66,6 @@ const Dashboard = () => {
     initialChartsState
   )
   const prevChartState = usePrevious(chartState)
-
-  const [isNewView, setIsNewView] = React.useState(false)
-  React.useEffect(() => {
-    if (
-      !isNewView &&
-      prevDataSetState &&
-      dataSetState.activeDataSetName === prevDataSetState.activeDataSetName &&
-      (!!Object.values(chartState).find((d) => !isEmpty(d)) ||
-        filterState.filterQuestions.length) &&
-      ((prevChartState && !isEqual(chartState, prevChartState)) ||
-        (prevFilterState && !isEqual(filterState, prevFilterState)))
-    ) {
-      setIsNewView(true)
-    }
-    if (
-      isNewView &&
-      ((prevDataSetState &&
-        dataSetState.activeDataSetName !==
-          prevDataSetState.activeDataSetName) ||
-        (!Object.values(chartState).find((d) => !isEmpty(d)) &&
-          !filterState.filterQuestions.length))
-    ) {
-      setIsNewView(false)
-    }
-  }, [
-    chartState,
-    prevChartState,
-    filterState,
-    prevFilterState,
-    isNewView,
-    dataSetState,
-    prevDataSetState,
-  ])
 
   const [questionSearchRef, { height: questionSearchRefHeight }] = useMeasure<
     HTMLDivElement
@@ -322,14 +287,14 @@ const Dashboard = () => {
       </Row>
       <Row gutter={[16, 16]}>
         <Col span={6}>
-          <Button
-            block
-            type="primary"
-            icon={<SaveFilled />}
-            disabled={!isNewView}
-          >
-            Save current view
-          </Button>
+          <SaveView
+            dataSetState={dataSetState}
+            prevDataSetState={prevDataSetState}
+            chartState={chartState}
+            prevChartState={prevChartState}
+            filterState={filterState}
+            prevFilterState={prevFilterState}
+          />
         </Col>
       </Row>
     </>

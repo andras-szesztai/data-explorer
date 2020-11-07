@@ -4,14 +4,13 @@ export interface UserState {
   currentUser: CurrentUserObject
 }
 
-
 export interface CurrentUserObject {
   id: string
   samenHier: SamenHierObject
 }
 
 export interface SamenHierObject {
-  savedViews: SavedViewObject[]
+  savedViews: { [title: string]: SavedViewObject }
 }
 
 export interface SavedViewObject {

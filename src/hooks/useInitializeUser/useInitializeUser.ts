@@ -29,7 +29,7 @@ const useInitializeUser = ({ userState, updateUserState }: Params) => {
           const newUser = {
             id: userState.userId,
             samenHier: {
-              savedViews: [] as SavedViewObject[],
+              savedViews: {} as { [title: string]: SavedViewObject },
             },
           }
           doc.set(newUser)
