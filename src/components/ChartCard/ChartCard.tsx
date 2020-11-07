@@ -2,15 +2,18 @@ import React from "react"
 import { Card, Select } from "antd"
 import { usePrevious } from "react-use"
 
+import VerticalBarChart from "../VerticalBarChart/VerticalBarChart"
+
 import { ChartActions } from "../../reducers/chartsReducer"
 import {
   addChartQuestion,
   removeChartQuestion,
 } from "../../actions/chartsActions"
 
-import { AvailableQuestion } from "../../types/dataSets"
 import useUpdateChartData from "../../hooks/useUpdateChartData/useUpdateChartData"
-import VerticalBarChart from "../VerticalBarChart/VerticalBarChart"
+
+import { AvailableQuestion, DataSetStatistics } from "../../types/dataSets"
+
 interface Props {
   dataSetState: any
   chart: AvailableQuestion
@@ -40,6 +43,8 @@ const ChartCard = ({
     prevChart,
     filteredDataSet,
   })
+  console.log("filteredDataSetStatistics", filteredDataSetStatistics)
+  console.log("chart", chart.group)
 
   const isDisabled = !availableQuestions.length
   return (
@@ -96,7 +101,15 @@ const ChartCard = ({
       }
     >
       {!!chartData.length && (
-        <VerticalBarChart data={chartData} question={chart} />
+        <VerticalBarChart
+          data={chartData}
+          question={chart}
+          total={
+            filteredDataSetStatistics.find(
+              (d: DataSetStatistics) => d.label === chart.group
+            )?.value
+          }
+        />
       )}
     </Card>
   )

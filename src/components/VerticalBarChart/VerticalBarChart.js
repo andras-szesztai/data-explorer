@@ -65,7 +65,7 @@ const margin = {
   left: 0,
 }
 
-const VerticalBarChart = ({ data, question }) => {
+const VerticalBarChart = ({ data, question, total }) => {
   const [divRef, { width, height }] = useMeasure()
   const [
     tooltipRef,
@@ -255,6 +255,13 @@ const VerticalBarChart = ({ data, question }) => {
             strong
           >
             {numeral(hovered.value).format("0.00%")}
+          </Typography.Text>{" "}
+          <Typography.Text
+            style={{
+              color: CHART_COLORS[question.type][hovered.label],
+            }}
+          >
+            ({numeral(hovered.value * total).format("0,0")})
           </Typography.Text>
         </TooltipContainer>
       )}
