@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { isEqual } from "lodash"
 
 import { AvailableQuestion } from "../../types/dataSets"
+import { FilterQuestionsState } from "../../types/filters"
 
 interface Params {
   activeViewName: string
@@ -13,6 +14,8 @@ interface Params {
   chartState: {
     [key: number]: AvailableQuestion
   }
+  filterState: FilterQuestionsState
+  prevFilterState?: FilterQuestionsState
 }
 
 const useEmptyActiveViewName = ({
@@ -21,6 +24,8 @@ const useEmptyActiveViewName = ({
   prevActiveViewName,
   prevChartState,
   chartState,
+  prevFilterState,
+  filterState,
 }: Params) => {
   useEffect(() => {
     if (
@@ -31,7 +36,12 @@ const useEmptyActiveViewName = ({
     ) {
       setActiveViewName("")
     }
-    if (activeViewName && activeViewName === prevActiveViewName) {
+    if (
+      activeViewName &&
+      activeViewName === prevActiveViewName &&
+      prevFilterState &&
+      !isEqual(filterState, prevFilterState)
+    ) {
       setActiveViewName("")
     }
   }, [
@@ -40,6 +50,8 @@ const useEmptyActiveViewName = ({
     activeViewName,
     prevActiveViewName,
     setActiveViewName,
+    filterState,
+    prevFilterState,
   ])
 }
 

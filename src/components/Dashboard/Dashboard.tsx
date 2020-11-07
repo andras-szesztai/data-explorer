@@ -75,6 +75,8 @@ const Dashboard = () => {
     prevActiveViewName,
     prevChartState,
     chartState,
+    prevFilterState,
+    filterState,
   })
 
   return (

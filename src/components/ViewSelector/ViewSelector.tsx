@@ -53,6 +53,23 @@ const ViewSelector = ({
   const updateUserState = React.useContext(UserDispatchContext)
 
   const [dataSetViews, setDataSetViews] = React.useState([] as string[])
+  const [currentQuickSelector, setCurrentQuickSelector] = React.useState("")
+  React.useEffect(() => {
+    if (
+      activeViewName
+        ? dataSetViews.filter((d) => d !== activeViewName)
+        : dataSetViews.length
+    ) {
+      const newValue = activeViewName
+        ? dataSetViews.find((d) => d !== activeViewName)
+        : dataSetViews[0]
+      setCurrentQuickSelector(newValue || dataSetViews[0])
+    }
+    if (!dataSetViews.length && currentQuickSelector) {
+      setCurrentQuickSelector("")
+    }
+  }, [dataSetViews, activeViewName, currentQuickSelector])
+
   const [viewListUpdateShouldRun, setViewListUpdateShouldRun] = React.useState(
     false
   )
@@ -96,11 +113,6 @@ const ViewSelector = ({
     viewListUpdateShouldRun,
   ])
 
-  const getQuickSelectorValue = () =>
-    dataSetViews.length > 1
-      ? dataSetViews.find((d) => d !== activeViewName)
-      : dataSetViews[0]
-
   const [isModalOpen, setIsModalOpen] = React.useState(false)
 
   const updateSelectedView = (value?: string) => {
@@ -134,19 +146,15 @@ const ViewSelector = ({
         <ElementContainer>
           Your most recently active saved view:
         </ElementContainer>
-        <ElementContainer
-          justify={
-            !!dataSetViews.length ? "flex-start" : ""
-          }
-        >
-          {!!dataSetViews.length ? (
+        <ElementContainer justify={!!dataSetViews.length ? "flex-start" : ""}>
+          {!!currentQuickSelector ? (
             <Button
               icon={<EyeFilled />}
               onClick={() => {
-                updateSelectedView(getQuickSelectorValue())
+                updateSelectedView(currentQuickSelector)
               }}
             >
-              {getQuickSelectorValue()}
+              {currentQuickSelector}
             </Button>
           ) : !activeDataSetName ? (
             "Select a dataset or saved view first"
