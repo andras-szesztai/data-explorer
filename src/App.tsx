@@ -1,13 +1,15 @@
 import React from "react"
 import styled from "styled-components"
 import { Route, BrowserRouter, Switch } from "react-router-dom"
-import { useUnmount } from "react-use"
+import { usePrevious } from "react-use"
+import { isEmpty, isEqual } from "lodash"
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"
 import Dashboard from "./components/Dashboard/Dashboard"
 import Login from "./components/Login/Login"
 import Confirmation from "./components/Confirmation/Confirmation"
 
+import { db } from "./firebase"
 import {
   initialUserState,
   UserActions,
@@ -37,7 +39,16 @@ const App = () => {
     initialUserState
   )
 
-  // useUnmount
+  const prevUserState = usePrevious(userState)
+  React.useEffect(() => {
+    if (
+      prevUserState &&
+      !isEmpty(prevUserState.currentUser) &&
+      !isEqual(prevUserState.currentUser, userState.currentUser)
+    ) {
+      db.collection("users").doc(userState.userId).set(userState.currentUser)
+    }
+  }, [userState, prevUserState])
 
   useInitializeUser({ userState, updateUserState })
 

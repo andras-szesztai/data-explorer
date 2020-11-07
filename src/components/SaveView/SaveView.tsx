@@ -78,6 +78,7 @@ const SaveView = ({
         filters: JSON.stringify(filterState.filterQuestions),
         charts: JSON.stringify(chartState),
         viewId: makeViewId(title),
+        dataSet: dataSetState.activeDataSetName
       })
     )
     setModalIsOpen(false)

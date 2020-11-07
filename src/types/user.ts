@@ -19,4 +19,5 @@ export interface SavedViewObject {
   date: Date
   filters: string
   charts: string
+  dataSet: string
 }
