@@ -1,6 +1,6 @@
 import React from "react"
 import { SaveFilled } from "@ant-design/icons"
-import { Button, Form, Input, Modal } from "antd"
+import { Button, Card, Form, Input, Modal } from "antd"
 import isEqual from "lodash/isEqual"
 import isEmpty from "lodash/isEmpty"
 
@@ -8,7 +8,6 @@ import { UserDispatchContext, UserStateContext } from "../../App"
 import { FilterQuestionsState } from "../../types/filters"
 import { AvailableQuestion } from "../../types/dataSets"
 import { addNewView } from "../../actions/userActions"
-
 interface Props {
   dataSetState: any
   prevDataSetState: any
@@ -16,6 +15,7 @@ interface Props {
   prevChartState?: { [key: number]: AvailableQuestion }
   filterState: FilterQuestionsState
   prevFilterState?: FilterQuestionsState
+  setActiveViewName: React.Dispatch<React.SetStateAction<string>>
 }
 
 // Can be prop later
@@ -28,6 +28,7 @@ const SaveView = ({
   prevChartState,
   filterState,
   prevFilterState,
+  setActiveViewName
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
@@ -78,9 +79,10 @@ const SaveView = ({
         filters: JSON.stringify(filterState.filterQuestions),
         charts: JSON.stringify(chartState),
         viewId: makeViewId(title),
-        dataSet: dataSetState.activeDataSetName
+        dataSet: dataSetState.activeDataSetName,
       })
     )
+    setActiveViewName(title)
     setModalIsOpen(false)
     titleExist && setTitleExist(false)
     setTitle("")
@@ -88,7 +90,12 @@ const SaveView = ({
   }
 
   return (
-    <>
+    <Card
+      bodyStyle={{
+        height: "100%",
+        padding: 12,
+      }}
+    >
       <Button
         block
         type="primary"
@@ -136,7 +143,7 @@ const SaveView = ({
           />
         </Form.Item>
       </Modal>
-    </>
+    </Card>
   )
 }
 

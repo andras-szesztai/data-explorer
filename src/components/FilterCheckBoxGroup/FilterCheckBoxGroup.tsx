@@ -51,7 +51,6 @@ const FilterCheckBoxGroup = ({ updateFilterState, question }: Props) => {
         <Button
           size="small"
           type="primary"
-          shape="round"
           onClick={() => {
             if (isAllChecked) {
               updateFilterState(updateFilters(question.id, []))
@@ -71,7 +70,6 @@ const FilterCheckBoxGroup = ({ updateFilterState, question }: Props) => {
             }}
             type="primary"
             icon={<DeleteFilled />}
-            shape="round"
             onClick={() => {
               updateFilterState(removeFilter(question.id))
             }}

@@ -17,6 +17,7 @@ export interface SamenHierObject {
 export interface SavedViewObject {
   id: string
   date: Date
+  lastActive: Date
   filters: string
   charts: string
   dataSet: string

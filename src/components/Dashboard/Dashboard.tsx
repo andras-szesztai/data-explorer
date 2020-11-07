@@ -38,6 +38,7 @@ import { AvailableQuestion } from "../../types/dataSets"
 
 import "../../styles/App.less"
 import SaveView from "../SaveView/SaveView"
+import ViewSelector from "../ViewSelector/ViewSelector"
 
 const ChartsMainContainer = styled.div`
   width: 100%;
@@ -86,6 +87,9 @@ const Dashboard = () => {
       )
     }
   }, [filterState, prevFilterState, dataSetState])
+
+  const [activeViewName, setActiveViewName] = React.useState("")
+
   return (
     <>
       <Row gutter={[16, 16]}>
@@ -294,6 +298,14 @@ const Dashboard = () => {
             prevChartState={prevChartState}
             filterState={filterState}
             prevFilterState={prevFilterState}
+            setActiveViewName={setActiveViewName}
+          />
+        </Col>
+        <Col span={18}>
+          <ViewSelector
+            setActiveViewName={setActiveViewName}
+            activeViewName={activeViewName}
+            activeDataSetName={dataSetState.activeDataSetName}
           />
         </Col>
       </Row>

@@ -48,6 +48,7 @@ export const userReducer = (state: UserState, action: UserActions) => {
                 [action.payload.viewId]: {
                   id: uuidv4(),
                   date: new Date(),
+                  lastActive: new Date(),
                   filters: action.payload.filters,
                   charts: action.payload.charts,
                   dataSet: action.payload.dataSet,
