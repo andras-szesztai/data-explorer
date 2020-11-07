@@ -7,6 +7,8 @@ import {
   INITIALIZE_CURRENT_USER,
   addNewView,
   ADD_NEW_VIEW,
+  updateViewLastActive,
+  UPDATE_VIEW_LAST_ACTIVE,
 } from "../actions/userActions"
 
 import { CurrentUserObject, UserState } from "../types/user"
@@ -18,10 +20,14 @@ export const initialUserState = {
 }
 
 export type UserActions = ReturnType<
-  typeof loginUser | typeof addCurrentUser | typeof addNewView
+  | typeof loginUser
+  | typeof addCurrentUser
+  | typeof addNewView
+  | typeof updateViewLastActive
 >
 
 export const userReducer = (state: UserState, action: UserActions) => {
+  let currProject
   switch (action.type) {
     case LOGIN_USER:
       return {
@@ -35,7 +41,7 @@ export const userReducer = (state: UserState, action: UserActions) => {
         currentUser: action.payload,
       }
     case ADD_NEW_VIEW:
-      const currProject = state.currentUser[action.payload.projectAccessor]
+      currProject = state.currentUser[action.payload.projectAccessor]
       if (typeof currProject != "string") {
         return {
           ...state,
@@ -53,6 +59,28 @@ export const userReducer = (state: UserState, action: UserActions) => {
                   charts: action.payload.charts,
                   dataSet: action.payload.dataSet,
                   title: action.payload.title,
+                },
+              },
+            },
+          },
+        }
+      } else {
+        return state
+      }
+    case UPDATE_VIEW_LAST_ACTIVE:
+      currProject = state.currentUser[action.projectAccessor]
+      if (typeof currProject !== "string") {
+        return {
+          ...state,
+          currentUser: {
+            ...state.currentUser,
+            [action.projectAccessor]: {
+              ...currProject,
+              savedViews: {
+                ...currProject.savedViews,
+                [action.viewId]: {
+                  ...currProject.savedViews[action.viewId],
+                  lastActive: new Date(),
                 },
               },
             },

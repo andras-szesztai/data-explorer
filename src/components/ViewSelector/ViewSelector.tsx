@@ -3,11 +3,13 @@ import { Button, Card } from "antd"
 import styled from "styled-components"
 import { EyeFilled } from "@ant-design/icons"
 
-import { UserStateContext } from "../../App"
+import { UserDispatchContext, UserStateContext } from "../../App"
 import { updateAllFilters } from "../../actions/filtersActions"
 import { FilterActions } from "../../reducers/filtersReducer"
 
 import { SavedViewObject } from "../../types/user"
+import { updateViewLastActive } from "../../actions/userActions"
+import Modal from "antd/lib/modal/Modal"
 
 const MainContainer = styled.div`
   height: 100%;
@@ -40,9 +42,10 @@ const ViewSelector = ({
   activeDataSetName,
   prevActiveDataSetName,
   updateFilterState,
-  prevActiveViewName
+  prevActiveViewName,
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
+  const updateUserState = React.useContext(UserDispatchContext)
 
   const [dataSetViews, setDataSetViews] = React.useState([] as string[])
   React.useEffect(() => {
@@ -56,11 +59,17 @@ const ViewSelector = ({
       )
       const lastActiveSorted = dataSetFilteredViews.length
         ? dataSetFilteredViews
-            .sort((a: any, b: any) =>
-              a.lastActive instanceof Date
-                ? b.lastActive - a.lastActive
-                : b.lastActive.toDate() - a.lastActive.toDate()
-            )
+            .sort((a: any, b: any) => {
+              let aValue =
+                a.lastActive instanceof Date
+                  ? a.lastActive
+                  : a.lastActive.toDate()
+              let bValue =
+                b.lastActive instanceof Date
+                  ? b.lastActive
+                  : b.lastActive.toDate()
+              return bValue - aValue
+            })
             .map((v: SavedViewObject) => v.title)
         : []
       setDataSetViews(lastActiveSorted)
@@ -80,8 +89,9 @@ const ViewSelector = ({
     activeViewName && dataSetViews.length > 1
       ? dataSetViews.find((d) => d !== activeViewName)
       : activeViewName || dataSetViews[0]
-  console.log("activeViewName", activeViewName)
-  console.log("getQuickSelectorValue", getQuickSelectorValue())
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
+
   return (
     <Card
       style={{
@@ -110,9 +120,14 @@ const ViewSelector = ({
                       `${activeDataSetName} - ${value}`
                     ]
                   const viewFilters = JSON.parse(view.filters)
-                  // update current user obj
                   updateFilterState(updateAllFilters(viewFilters))
                   setActiveViewName(value)
+                  updateUserState(
+                    updateViewLastActive(
+                      `${activeDataSetName} - ${value}`,
+                      projectAccessor
+                    )
+                  )
                 }
               }}
             >
@@ -129,12 +144,27 @@ const ViewSelector = ({
             type="primary"
             block
             icon={<EyeFilled />}
-            disabled={!activeDataSetName}
-            // onClick={() => isNewView && setModalIsOpen(true)}
+            disabled={!dataSetViews.length}
+            onClick={() => !!dataSetViews.length && setIsModalOpen(true)}
           >
             Show all saved views
           </Button>
         </ElementContainer>
+        <Modal
+          title="Select a saved view from your list:"
+          centered
+          visible={isModalOpen}
+          okText="Select view"
+          okButtonProps={{ disabled: false }}
+          onOk={() => {
+            console.log("selecting")
+          }}
+          onCancel={() => {
+            setIsModalOpen(false)
+          }}
+        >
+          Hello
+        </Modal>
       </MainContainer>
     </Card>
   )
