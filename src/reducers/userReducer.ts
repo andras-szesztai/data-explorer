@@ -52,6 +52,7 @@ export const userReducer = (state: UserState, action: UserActions) => {
                   filters: action.payload.filters,
                   charts: action.payload.charts,
                   dataSet: action.payload.dataSet,
+                  title: action.payload.title,
                 },
               },
             },

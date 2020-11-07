@@ -44,8 +44,8 @@ const ChartsMainContainer = styled.div`
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 33.33%);
-  grid-column-gap: 8px;
+  grid-template-columns: repeat(3, 32%);
+  grid-column-gap: 2%;
   grid-template-rows: repeat(2, 1fr);
   grid-row-gap: 8px;
 `
@@ -306,6 +306,7 @@ const Dashboard = () => {
             setActiveViewName={setActiveViewName}
             activeViewName={activeViewName}
             activeDataSetName={dataSetState.activeDataSetName}
+            prevActiveDataSetName={prevDataSetState?.activeDataSetName}
           />
         </Col>
       </Row>

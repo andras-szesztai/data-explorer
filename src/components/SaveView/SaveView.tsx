@@ -80,6 +80,7 @@ const SaveView = ({
         charts: JSON.stringify(chartState),
         viewId: makeViewId(title),
         dataSet: dataSetState.activeDataSetName,
+        title
       })
     )
     setActiveViewName(title)
@@ -135,9 +136,8 @@ const SaveView = ({
                 currentUser[projectAccessor].savedViews[
                   makeViewId(e.target.value)
                 ]
-              if (isExist) {
-                setTitleExist(true)
-              }
+              if (isExist && !titleExist) setTitleExist(true)
+              if (!isExist && titleExist) setTitleExist(false)
             }}
             onPressEnter={saveNewTitle}
           />

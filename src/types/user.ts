@@ -21,4 +21,5 @@ export interface SavedViewObject {
   filters: string
   charts: string
   dataSet: string
+  title: string
 }

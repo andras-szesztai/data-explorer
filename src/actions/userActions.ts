@@ -1,4 +1,3 @@
-
 import { CurrentUserObject } from "../types/user"
 
 export const LOGIN_USER = "LOGIN_USER"
@@ -18,16 +17,18 @@ export const addNewView = ({
   filters,
   charts,
   viewId,
-  dataSet
+  dataSet,
+  title,
 }: {
   projectAccessor: string
   filters: string
   charts: string
-  viewId: string,
+  viewId: string
   dataSet: string
+  title: string
 }) => {
   return {
     type: ADD_NEW_VIEW,
-    payload: { projectAccessor, filters, charts, viewId, dataSet },
+    payload: { projectAccessor, filters, charts, viewId, dataSet, title },
   } as const
 }
