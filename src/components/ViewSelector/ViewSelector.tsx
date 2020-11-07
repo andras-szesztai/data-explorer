@@ -5,11 +5,13 @@ import { EyeFilled } from "@ant-design/icons"
 
 import { UserDispatchContext, UserStateContext } from "../../App"
 import { updateAllFilters } from "../../actions/filtersActions"
+import { updateViewLastActive } from "../../actions/userActions"
+import { updateAllCharts } from "../../actions/chartsActions"
 import { FilterActions } from "../../reducers/filtersReducer"
+import { ChartActions } from "../../reducers/chartsReducer"
 
 import { SavedViewObject } from "../../types/user"
-import { updateViewLastActive } from "../../actions/userActions"
-import Modal from "antd/lib/modal/Modal"
+import ViewSelectorModal from "../ViewSelectorModal/ViewSelectorModal"
 
 const MainContainer = styled.div`
   height: 100%;
@@ -32,6 +34,7 @@ interface Props {
   activeDataSetName: string
   prevActiveDataSetName?: string
   updateFilterState: React.Dispatch<FilterActions>
+  updateChartState: React.Dispatch<ChartActions>
 }
 
 const projectAccessor = "samenHier"
@@ -43,6 +46,7 @@ const ViewSelector = ({
   prevActiveDataSetName,
   updateFilterState,
   prevActiveViewName,
+  updateChartState
 }: Props) => {
   const { currentUser } = React.useContext(UserStateContext)
   const updateUserState = React.useContext(UserDispatchContext)
@@ -120,7 +124,9 @@ const ViewSelector = ({
                       `${activeDataSetName} - ${value}`
                     ]
                   const viewFilters = JSON.parse(view.filters)
+                  const viewCharts = JSON.parse(view.charts)
                   updateFilterState(updateAllFilters(viewFilters))
+                  updateChartState(updateAllCharts(viewCharts))
                   setActiveViewName(value)
                   updateUserState(
                     updateViewLastActive(
@@ -150,21 +156,10 @@ const ViewSelector = ({
             Show all saved views
           </Button>
         </ElementContainer>
-        <Modal
-          title="Select a saved view from your list:"
-          centered
-          visible={isModalOpen}
-          okText="Select view"
-          okButtonProps={{ disabled: false }}
-          onOk={() => {
-            console.log("selecting")
-          }}
-          onCancel={() => {
-            setIsModalOpen(false)
-          }}
-        >
-          Hello
-        </Modal>
+        <ViewSelectorModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
       </MainContainer>
     </Card>
   )

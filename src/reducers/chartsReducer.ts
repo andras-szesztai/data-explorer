@@ -5,6 +5,8 @@ import {
   removeChartQuestion,
   REMOVE_ALL_CHARTS,
   REMOVE_CHART_QUESTION,
+  updateAllCharts,
+  UPDATE_ALL_CHARTS,
 } from "../actions/chartsActions"
 
 import { AvailableQuestion } from "../types/dataSets"
@@ -20,10 +22,13 @@ export const initialChartsState = {
 
 export type ChartActions = ReturnType<
   typeof addChartQuestion | typeof removeChartQuestion | typeof removeAllCharts
+  | typeof updateAllCharts
 >
 
 export const chartsReducer = (
-  state = initialChartsState,
+  state: {
+    [key: number]: AvailableQuestion
+  },
   action: ChartActions
 ) => {
   switch (action.type) {
@@ -37,6 +42,8 @@ export const chartsReducer = (
         ...state,
         [action.questionToRemove]: {} as AvailableQuestion,
       }
+    case UPDATE_ALL_CHARTS:
+      return action.newChartState
     case REMOVE_ALL_CHARTS:
       return initialChartsState
     default:

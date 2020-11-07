@@ -331,6 +331,7 @@ const Dashboard = () => {
             activeDataSetName={dataSetState.activeDataSetName}
             prevActiveDataSetName={prevDataSetState?.activeDataSetName}
             updateFilterState={updateFilterState}
+            updateChartState={updateChartState}
           />
         </Col>
       </Row>
