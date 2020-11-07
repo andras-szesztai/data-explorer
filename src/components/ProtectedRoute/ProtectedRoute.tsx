@@ -8,7 +8,6 @@ interface Props {
 }
 const ProtectedRoute = ({ component, path }: Props) => {
   const userState = React.useContext(UserStateContext)
-  console.log("ProtectedRoute -> userState", userState)
 
   return userState.isAuthenticated ? (
     <Route path={path} component={component} exact={true} />
