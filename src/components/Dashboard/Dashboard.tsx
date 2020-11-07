@@ -1,16 +1,15 @@
 import React from "react"
-import { Select, Space, Card, Collapse, Badge, Tooltip, Row, Col } from "antd"
+import { Card, Row, Col } from "antd"
 import styled from "styled-components"
-import { useMeasure, usePrevious } from "react-use"
+import { usePrevious } from "react-use"
 
-import FilterCheckBoxGroup from "../FilterCheckBoxGroup/FilterCheckBoxGroup"
 import DataSetSelector from "../DataSetSelector/DataSetSelector"
 import ChartCard from "../ChartCard/ChartCard"
 import ViewSelector from "../ViewSelector/ViewSelector"
 import SaveView from "../SaveView/SaveView"
 import StatisticsContainer from "../StatisticsContainer/StatisticsContainer"
+import FilterContainer from "../FilterContainer/FilterContainer"
 
-import { addFilter } from "../../actions/filtersActions"
 import {
   dataSetReducer,
   initialDataSetState,
@@ -24,13 +23,10 @@ import { chartsReducer, initialChartsState } from "../../reducers/chartsReducer"
 import {
   useInitializeAvailableDataSets,
   useUpdateFilteredDataSet,
+  useEmptyActiveViewName,
 } from "../../hooks"
-import { COLORS } from "../../constants/colors"
-import { CHART_AREA_HEIGHT } from "../../constants/dimensions"
-import { AvailableQuestion } from "../../types/dataSets"
 
 import "../../styles/App.less"
-import useEmptyActiveViewName from "../../hooks/useEmptyActiveViewName/useEmptyActiveViewName"
 
 const ChartsMainContainer = styled.div`
   width: 100%;
@@ -60,10 +56,6 @@ const Dashboard = () => {
   const prevChartState = usePrevious(chartState)
   const [activeViewName, setActiveViewName] = React.useState("")
   const prevActiveViewName = usePrevious(activeViewName)
-
-  const [questionSearchRef, { height: questionSearchRefHeight }] = useMeasure<
-    HTMLDivElement
-  >()
 
   useInitializeAvailableDataSets(
     dataSetState.availableDataSets,
@@ -105,118 +97,12 @@ const Dashboard = () => {
       </Row>
       <Row gutter={[16, 16]}>
         <Col span={6}>
-          <Card
-            style={{
-              height: CHART_AREA_HEIGHT,
-            }}
-          >
-            <div ref={questionSearchRef}>
-              <Space
-                direction="vertical"
-                style={{
-                  width: "100%",
-                  marginBottom: 8,
-                }}
-              >
-                <Select
-                  onChange={(value) => {
-                    const selectedQuestion = dataSetState.availableQuestions.find(
-                      (q: AvailableQuestion) => q.question === value
-                    )
-                    updateFilterState(addFilter(selectedQuestion))
-                  }}
-                  disabled={!dataSetState.availableQuestions.length}
-                  style={{ width: "100%" }}
-                  showSearch
-                  showArrow={false}
-                  placeholder={
-                    !dataSetState.availableQuestions.length
-                      ? "Select a dataset to start"
-                      : "Add a question as filter"
-                  }
-                  value={filterState.filterQuestions.length ? "" : undefined}
-                >
-                  {dataSetState.availableGroups.map((group: string) => {
-                    return (
-                      <Select.OptGroup label={group} key={`${group}-chart-q`}>
-                        {dataSetState.availableQuestions
-                          .filter(
-                            (question: AvailableQuestion) =>
-                              question.group === group
-                          )
-                          .filter((question: AvailableQuestion) =>
-                            filterState.filterQuestions.length
-                              ? !filterState.filterQuestions.find(
-                                  (q) => q.id === question.id
-                                )
-                              : true
-                          )
-                          .sort((a: AvailableQuestion, b: AvailableQuestion) =>
-                            a.question.localeCompare(b.question)
-                          )
-                          .map((question: AvailableQuestion) => {
-                            return (
-                              <Select.Option
-                                key={question.id}
-                                value={question.question}
-                              >
-                                {question.question}
-                              </Select.Option>
-                            )
-                          })}
-                      </Select.OptGroup>
-                    )
-                  })}
-                </Select>
-              </Space>
-            </div>
-            {!!filterState.filterQuestions.length && (
-              <Collapse
-                style={{
-                  maxHeight: CHART_AREA_HEIGHT - questionSearchRefHeight - 48,
-                  overflowY: "scroll",
-                  overflowX: "hidden",
-                  marginBottom: 8,
-                }}
-              >
-                {filterState.filterQuestions.map((question) => {
-                  return (
-                    <Collapse.Panel
-                      key={question.id}
-                      header={
-                        <>
-                          <Badge
-                            count={question.group}
-                            style={{ backgroundColor: COLORS.primaryBlue }}
-                          />{" "}
-                          {question.question}{" "}
-                          {question.options.length !==
-                            question.checkedOptions.length && (
-                            <Tooltip
-                              placement="topLeft"
-                              title="This question is actively filtering the dataset"
-                            >
-                              <Badge
-                                count="Active"
-                                style={{
-                                  backgroundColor: COLORS.secondaryOrange,
-                                }}
-                              />
-                            </Tooltip>
-                          )}
-                        </>
-                      }
-                    >
-                      <FilterCheckBoxGroup
-                        updateFilterState={updateFilterState}
-                        question={question}
-                      />
-                    </Collapse.Panel>
-                  )
-                })}
-              </Collapse>
-            )}
-          </Card>
+          <FilterContainer
+            availableQuestions={dataSetState.availableQuestions}
+            filterQuestions={filterState.filterQuestions}
+            updateFilterState={updateFilterState}
+            availableGroups={dataSetState.availableGroups}
+          />
         </Col>
         <Col span={18}>
           <Card

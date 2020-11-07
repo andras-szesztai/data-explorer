@@ -3,3 +3,4 @@ export { default as useFetchActiveDataSet } from './useFetchActiveDataSet/useFet
 export { default as useInitializeUser } from './useInitializeUser/useInitializeUser'
 export { default as useSyncSavedViews } from './useSyncSavedViews/useSyncSavedViews'
 export { default as useUpdateFilteredDataSet } from './useUpdateFilteredDataSet/useUpdateFilteredDataSet'
+export { default as useEmptyActiveViewName } from './useEmptyActiveViewName/useEmptyActiveViewName'
