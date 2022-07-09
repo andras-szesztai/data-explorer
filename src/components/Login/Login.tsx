@@ -15,7 +15,7 @@ const MainContainer = styled.div`
 
 const Login = () => {
   const sendEmail = async (email: string) => {
-    if (/@justiceandpeace.nl$/.test(email)) {
+    if (/@justiceandpeace.nl$/.test(email) || email === 'and.szesztai@gmail.com') {
       try {
         auth.sendSignInLinkToEmail(email, {
           url: window.location.href.replace("login", "confirmation"),
